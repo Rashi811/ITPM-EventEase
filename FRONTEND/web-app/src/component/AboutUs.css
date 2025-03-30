@@ -1,0 +1,77 @@
+/* Unique styles for the EventEase About Us page */
+.eventease-about-container {
+    max-width: 800px;
+    margin: 60px auto;
+    padding: 25px;
+    background: #f9f9f9;
+    border-radius: 12px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    margin-bottom: 80px; /* Increase bottom margin */
+}
+
+.eventease-about-title {
+    color: #333;
+    font-size: 35px;
+    margin-bottom: 15px;
+}
+
+.eventease-about-text {
+    font-size: 18px;
+    color: #555;
+    line-height: 1.6;
+    margin-bottom: 15px;
+}
+
+.eventease-brand-name {
+    font-weight: bold;
+    color: #ff6600;
+}
+
+.eventease-about-heading {
+    color: #222;
+    font-size: 24px;
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+/* Fix for the list to display items one below the other */
+.eventease-about-list {
+    list-style-type: none;
+    padding: 0;
+    margin-top: 15px;
+    text-align: left; /* Aligns list items to the left */
+    display: block;
+}
+
+.eventease-about-list li {
+    font-size: 20px;
+    color: #444;
+    margin: 8px 0;
+    background: #00aeffea;
+    padding: 10px;
+    border-radius: 6px;
+    color: white;
+    display: flex; /* Ensures proper block alignment */
+    align-items: center;
+    justify-content: start;
+    gap: 10px; /* Space between the icon and text */
+}
+
+.eventease-about-list li::before {
+    content: "✔";
+    color: white;
+    font-weight: bold;
+}
+
+@media (max-width: 768px) {
+    .eventease-about-container {
+        margin: 20px;
+        padding: 15px;
+    }
+    
+    .eventease-about-text,
+    .eventease-about-list li {
+        font-size: 16px;
+    }
+}

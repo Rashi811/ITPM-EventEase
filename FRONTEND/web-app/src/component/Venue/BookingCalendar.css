@@ -1,0 +1,294 @@
+/* BookingCalendar.css */
+
+/* Main container styles */
+.booking-calendar-container {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Header styles */
+.calendar-header {
+  color: #2c3e50;
+  text-align: center;
+  margin-bottom: 25px;
+  font-size: 28px;
+  font-weight: 600;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #3498db;
+}
+
+/* Legend styles */
+.calendar-legend {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 25px;
+  margin-bottom: 25px;
+  padding: 15px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.legend-color {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+}
+
+.legend-color.approved {
+  background-color: #28a745;
+}
+
+.legend-color.pending {
+  background-color: #ffc107;
+}
+
+.legend-color.rejected {
+  background-color: #dc3545;
+}
+
+.legend-color.suggestion {
+  background-color: #17a2b8;
+}
+
+/* Custom event styles - IMPORTANT CHANGES HERE */
+.rbc-event {
+  border: none !important;
+  padding: 2px 5px !important;
+}
+
+.rbc-event-content {
+  background-color: inherit !important;
+}
+
+.custom-event {
+  padding: 5px 8px;
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  border-left: 3px solid rgba(255, 255, 255, 0.7);
+  background-color: inherit;
+}
+
+.custom-event strong {
+  display: block;
+  margin-bottom: 3px;
+  font-weight: 600;
+  color: white;
+}
+
+.event-time {
+  font-size: 11px;
+  margin-bottom: 3px;
+  opacity: 0.9;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.event-status {
+  font-size: 10px;
+  text-transform: uppercase;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  color: white;
+}
+
+/* Specific status colors - THESE ARE CRUCIAL */
+.rbc-event[title*="Approved"],
+.rbc-event[data-status="approved"] {
+  background-color: #28a745 !important;
+}
+
+.rbc-event[title*="Pending"],
+.rbc-event[data-status="pending"] {
+  background-color: #ffc107 !important;
+}
+
+.rbc-event[title*="Rejected"],
+.rbc-event[data-status="rejected"] {
+  background-color: #dc3545 !important;
+}
+
+.rbc-event[title*="Suggestion"],
+.rbc-event[data-status="suggestion"] {
+  background-color: #17a2b8 !important;
+}
+
+/* Calendar overrides */
+.rbc-calendar {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 15px;
+  margin-top: 15px;
+}
+
+.rbc-header {
+  background-color: #3498db;
+  color: white;
+  padding: 12px 0;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+}
+
+.rbc-today {
+  background-color: #e8f4fc;
+}
+
+.rbc-event {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.rbc-event:hover {
+  opacity: 1 !important;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.15);
+  z-index: 1;
+  transform: scale(1.02);
+}
+
+.rbc-toolbar {
+  margin-bottom: 15px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.rbc-toolbar button {
+  color: #2c3e50;
+  border: 1px solid #ddd;
+  background: none;
+  cursor: pointer;
+  padding: 6px 12px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.rbc-toolbar button:hover {
+  background-color: #f8f9fa;
+  border-color: #3498db;
+  color: #3498db;
+}
+
+.rbc-toolbar button.rbc-active {
+  background-color: #3498db;
+  color: white;
+  border-color: #3498db;
+}
+
+.rbc-month-view,
+.rbc-time-view,
+.rbc-agenda-view {
+  border: 1px solid #eee;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.rbc-date-cell {
+  text-align: center;
+  padding: 8px;
+  font-weight: 500;
+}
+
+.rbc-off-range-bg {
+  background-color: #f9f9f9;
+}
+
+.rbc-current-time-indicator {
+  background-color: #e74c3c;
+  height: 2px;
+}
+
+/* Loading and error states */
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 300px;
+  font-size: 18px;
+  color: #3498db;
+  font-weight: 500;
+}
+
+.error-message {
+  color: #e74c3c;
+  padding: 20px;
+  background-color: #fadbd8;
+  border-radius: 8px;
+  text-align: center;
+  margin: 20px auto;
+  max-width: 600px;
+  font-weight: 500;
+  border-left: 4px solid #e74c3c;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .booking-calendar-container {
+    padding: 15px;
+  }
+  
+  .calendar-header {
+    font-size: 22px;
+    margin-bottom: 15px;
+  }
+  
+  .calendar-legend {
+    gap: 15px;
+    padding: 10px;
+  }
+  
+  .rbc-calendar {
+    padding: 10px;
+  }
+  
+  .rbc-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+  
+  .rbc-toolbar button {
+    width: 100%;
+  }
+  
+  .rbc-header {
+    padding: 8px 0;
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 480px) {
+  .calendar-legend {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  
+  .rbc-event-content {
+    font-size: 10px;
+  }
+  
+  .custom-event {
+    padding: 3px 5px;
+  }
+}

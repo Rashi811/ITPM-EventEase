@@ -1,0 +1,41 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #222;
+  padding: 15px 30px;
+  color: white;
+  font-size: 25px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+}
+
+.logo img {
+  width: 100px; /* Increased size of the logo */
+  height: 100px;
+  margin-right: 15px; /* Slightly more space between the logo and the text */
+}
+
+.event-name {
+  font-style: italic; /* Make the EventEase name italic */
+}
+
+.nav-links a {
+  color: white;
+  text-decoration: none;
+  margin: 0 20px;
+  font-size: 18px;
+}
+
+.nav-links a:hover {
+  color: #ffcc00;
+}
+
+.icon {
+  font-size: 25px; /* Adjust the size of the icons */
+  color: white;
+  margin: 0 10px;
+}
