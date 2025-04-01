@@ -165,3 +165,93 @@ exports.deleteVenueSuggestion = async (req, res) => {
     });
   }
 };
+
+// Approve a venue suggestion
+exports.approveVenueSuggestion = async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const venueSuggestion = await VenueSuggestion.findById(id);
+    if (!venueSuggestion) {
+      return res.status(404).json({
+        success: false,
+        message: 'Venue suggestion not found'
+      });
+    }
+
+    venueSuggestion.status = 'approved';
+    await venueSuggestion.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'Venue suggestion approved successfully',
+      data: venueSuggestion
+    });
+  } catch (error) {
+    console.error('Error approving venue suggestion:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error approving venue suggestion'
+    });
+  }
+};
+
+// Reject a venue suggestion
+exports.rejectVenueSuggestion = async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const venueSuggestion = await VenueSuggestion.findById(id);
+    if (!venueSuggestion) {
+      return res.status(404).json({
+        success: false,
+        message: 'Venue suggestion not found'
+      });
+    }
+
+    venueSuggestion.status = 'rejected';
+    await venueSuggestion.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'Venue suggestion rejected successfully',
+      data: venueSuggestion
+    });
+  } catch (error) {
+    console.error('Error rejecting venue suggestion:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error rejecting venue suggestion'
+    });
+  }
+};
+
+// Update venue suggestion
+exports.updateVenueSuggestion = async (req, res) => {
+  try {
+    const venueSuggestion = await VenueSuggestion.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true, runValidators: true }
+    );
+
+    if (!venueSuggestion) {
+      return res.status(404).json({
+        success: false,
+        message: 'Venue suggestion not found'
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Venue suggestion updated successfully',
+      data: venueSuggestion
+    });
+  } catch (error) {
+    console.error('Error updating venue suggestion:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error updating venue suggestion'
+    });
+  }
+};

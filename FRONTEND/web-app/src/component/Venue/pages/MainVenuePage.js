@@ -45,7 +45,7 @@ const MainVenuePage = () => {
   };
 
   const openWhatsApp = () => {
-    const phoneNumber = "+94763793360";
+    const phoneNumber = "+94770710385";
     const message = "Hello, I need help with my venue booking";
     window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`, "_blank");
   };
