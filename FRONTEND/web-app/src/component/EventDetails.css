@@ -157,3 +157,37 @@
   border-radius: 8px;
   margin: 1rem 0;
 }
+
+.delete-confirmation {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  margin-top: 1rem;
+}
+
+.delete-confirmation p {
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.event-details-button.confirm-delete {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.event-details-button.cancel-delete {
+  background-color: #95a5a6;
+  color: white;
+}
+
+.event-details-button.confirm-delete:hover {
+  background-color: #c0392b;
+}
+
+.event-details-button.cancel-delete:hover {
+  background-color: #7f8c8d;
+}

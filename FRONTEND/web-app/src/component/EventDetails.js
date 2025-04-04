@@ -23,11 +23,15 @@ const EventDetails = () => {
   };
 
   const handleDelete = async (id) => {
-    try {
-      await axios.delete(`http://localhost:5000/events/${id}`);
-      setEvents(events.filter(event => event._id !== id));
-    } catch (error) {
-      console.error("Error deleting event:", error);
+    const confirmDelete = window.confirm("Are you sure you want to delete this event?");
+    
+    if (confirmDelete) {
+      try {
+        await axios.delete(`http://localhost:5000/events/${id}`);
+        setEvents(events.filter(event => event._id !== id));
+      } catch (error) {
+        console.error("Error deleting event:", error);
+      }
     }
   };
 
