@@ -89,7 +89,7 @@ body {
 
 .right-text2 {
   position: absolute; /* Positions the element relative to the nearest positioned ancestor */
-  bottom: -125%; /* Adjusts the distance from the bottom */
+  bottom: -55%; /* Adjusts the distance from the bottom */
   left: 40%; /* Moves the element to the center */
   transform: translateX(-50%); /* Centers the element properly */
   text-align: center;
