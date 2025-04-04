@@ -34,6 +34,9 @@ const EventHome = () => {
           <div className="buttons">
             <Link to="/add-event" className="btn">Add Event</Link>
             <Link to="/event-details" className="btn">Event Details</Link>
+            <Link to="/all-reports" className="btn">All Reports</Link>
+            <Link to="/add-report" className="btn">Add Report</Link>
+
           </div>
         </div>
 

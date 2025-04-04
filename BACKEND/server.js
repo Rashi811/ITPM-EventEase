@@ -1,6 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const eventRoutes = require("./Routes/eventRoutes");
+const reportRoutes = require("./Routes/reportRoutes");
 
 const app = express();
 const cors = require("cors");
@@ -15,7 +16,9 @@ const venueSuggestionRoutes = require('./Routes/venueSuggestionRoutes');
 // Middleware
 app.use(express.json());
 app.use("/events", eventRoutes);
+app.use("/api/reports", reportRoutes);
 app.use('/api/tasks', taskRoutes);
+
 
 // API Routes
 app.use('/api', bookingRoutes);

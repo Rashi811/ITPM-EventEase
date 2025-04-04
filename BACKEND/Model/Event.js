@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 const eventSchema = new Schema({
     eventType: { type: String, required: true },
-    eventName: { type: String, required: true, unique: true }, // Ensures event names are unique
+    eventName: { type: String, required: true, unique: true }, 
     contactNumber: { type: String, required: true },
     email: { type: String, required: true },
     date: { type: Date, required: true },

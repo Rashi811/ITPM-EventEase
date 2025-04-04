@@ -38,3 +38,6 @@ backend/node_modules/puppeteer/.local-chromium/
 
 # NPM global modules
 npm/
+
+.env
+node_modules/

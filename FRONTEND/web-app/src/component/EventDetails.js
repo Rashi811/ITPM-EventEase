@@ -25,7 +25,7 @@ const EventDetails = () => {
   const handleDelete = async (id) => {
     try {
       await axios.delete(`http://localhost:5000/events/${id}`);
-      setEvents(events.filter(event => event._id !== id)); // Remove deleted event
+      setEvents(events.filter(event => event._id !== id));
     } catch (error) {
       console.error("Error deleting event:", error);
     }
@@ -36,14 +36,14 @@ const EventDetails = () => {
   };
 
   return (
-    <div className="event-details">
-      <h1>All Events</h1>
-      <div className="event-list">
+    <div className="event-details-container">
+      <h1 className="event-details-title">All Events</h1>
+      <div className="event-details-list">
         {events.length === 0 ? (
-          <p>No events found.</p>
+          <p className="event-details-no-events">No events found.</p>
         ) : (
           events.map((event) => (
-            <div key={event._id} className="event-card">
+            <div key={event._id} className="event-details-card">
               <h3>{event.eventName}</h3>
               <p><strong>Event Type:</strong> {event.eventType}</p>
               <p><strong>Event Name:</strong> {event.eventName}</p>
@@ -54,19 +54,31 @@ const EventDetails = () => {
               <p><strong>Guest Details:</strong> {event.guestDetails}</p>
               <p><strong>Special Notes:</strong> {event.specialNotes}</p>
 
-              <button className="update-button" onClick={() => handleUpdate(event)}>Update</button>
-              <button className="delete-button" onClick={() => handleDelete(event._id)}>Delete</button>
-
+              <div className="event-details-actions">
+                <button 
+                  className="event-details-button update" 
+                  onClick={() => handleUpdate(event)}
+                >
+                  Update
+                </button>
+                <button 
+                  className="event-details-button delete" 
+                  onClick={() => handleDelete(event._id)}
+                >
+                  Delete
+                </button>
+              </div>
             </div>
           ))
         )}
       </div>
-<br></br><br></br>
-      {/* Back to Home Button */}
-      <button className="back-home-btn" onClick={() => navigate("/event")}>
+
+      <button 
+        className="event-details-back-button" 
+        onClick={() => navigate("/event")}
+      >
         Back to Home
       </button>
-
     </div>
   );
 };
