@@ -191,3 +191,29 @@
 .event-details-button.cancel-delete:hover {
   background-color: #7f8c8d;
 }
+
+.event-details-search {
+  margin-bottom: 2rem;
+  display: flex;
+  justify-content: center;
+}
+
+.event-details-search-input {
+  width: 100%;
+  max-width: 500px;
+  padding: 0.8rem 1.2rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.event-details-search-input:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+}
+
+.event-details-search-input::placeholder {
+  color: #95a5a6;
+}

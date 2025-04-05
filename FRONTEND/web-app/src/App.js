@@ -11,6 +11,9 @@ import Footer from "./component/Footer";
 import AboutUs from "./component/AboutUs";
 import AddReport from "./component/AddReport";
 import AllReports from "./component/AllReports";
+import SignUp from './component/SignUp';
+import Login from './component/Login';
+import AdminDashboard from './component/AdminDashboard';
 
 // Ruvindya
 import MainVenuePage from "./component/Venue/pages/MainVenuePage";
@@ -43,6 +46,12 @@ function App() {
           <Route path="/add-report" element={<AddReport />} />
           <Route path="/all-reports" element={<AllReports />} />
           <Route path="/about" element={<AboutUs />} />
+          <Route path="/signUp" element={<SignUp />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/admin-dashboard" element={<AdminDashboard />} />
+          <Route path="/" element={<Login />} />
+          
+
           <Route path="/task-dashboard" element={<TaskDashboard />} />
           <Route path="/create-task" element={<TaskCreateForm />} />
           <Route path="/task-list" element={<TaskList />} />

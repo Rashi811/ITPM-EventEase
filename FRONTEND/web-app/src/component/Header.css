@@ -1,4 +1,4 @@
-.header {
+.header-container {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -8,34 +8,63 @@
   font-size: 25px;
 }
 
-.logo {
+.header-logo {
   display: flex;
   align-items: center;
 }
 
-.logo img {
-  width: 100px; /* Increased size of the logo */
+.header-logo-img {
+  width: 100px;
   height: 100px;
-  margin-right: 15px; /* Slightly more space between the logo and the text */
+  margin-right: 15px;
 }
 
-.event-name {
-  font-style: italic; /* Make the EventEase name italic */
+.header-event-name {
+  font-style: italic;
 }
 
-.nav-links a {
+.header-nav-links {
+  display: flex;
+  align-items: center;
+}
+
+.header-nav-item {
   color: white;
   text-decoration: none;
   margin: 0 20px;
   font-size: 18px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
 }
 
-.nav-links a:hover {
+.header-nav-item:hover {
   color: #ffcc00;
 }
 
-.icon {
-  font-size: 25px; /* Adjust the size of the icons */
+.header-icon {
+  font-size: 25px;
   color: white;
   margin: 0 10px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .header-container {
+    flex-direction: column;
+    padding: 10px;
+  }
+
+  .header-logo {
+    margin-bottom: 10px;
+  }
+
+  .header-nav-links {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .header-nav-item {
+    margin: 5px 10px;
+  }
 }

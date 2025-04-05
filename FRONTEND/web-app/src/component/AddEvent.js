@@ -16,7 +16,6 @@ const AddEvent = () => {
     specialNotes: "",
   });
 
-  // Get today's date in "YYYY-MM-DD" format
   const currentDate = new Date().toISOString().split("T")[0];
 
   const handleChange = (e) => {
@@ -29,11 +28,7 @@ const AddEvent = () => {
 
     try {
       await axios.post("http://localhost:5000/events", eventData);
-      
-      // Show success message
       alert("Event added successfully!");
-
-      // Navigate to home page
       navigate('/');
     } catch (error) {
       console.error("Error adding event:", error.response ? error.response.data : error.message);
@@ -42,19 +37,16 @@ const AddEvent = () => {
   };
 
   return (
-    <div className="event-add-container">
-    <h1 className="event-add-title">Add Your Event Details Here!</h1>
-    <form className="event-add-form" onSubmit={handleSubmit}>
-      <select
-        className="event-add-select"
-        name="eventType"
-        value={eventData.eventType}
-        onChange={handleChange}
-        required
-      >
-
-        {/* ... options ... */}
-
+    <div className="event-form-container">
+      <h1 className="event-form-title">Add Your Event Details Here!</h1>
+      <form className="event-form-form" onSubmit={handleSubmit}>
+        <select
+          className="event-form-select"
+          name="eventType"
+          value={eventData.eventType}
+          onChange={handleChange}
+          required
+        >
           <option value="" disabled>Select Event Type</option>
           <option value="Wedding">Wedding</option>
           <option value="Conference">Conference</option>
@@ -65,35 +57,66 @@ const AddEvent = () => {
           <option value="Other">Other</option>
         </select>
         <input 
-        className="event-add-input"
-        type="text" 
-        name="eventName" 
-        placeholder="Event Name" 
-        value={eventData.eventName} 
-        onChange={handleChange} 
-        required
-      />
-        <input type="text" name="contactNumber"  placeholder="Contact Number"  value={eventData.contactNumber} onChange={handleChange} required/>
-        <input type="email" name="email" placeholder="Email" value={eventData.email} onChange={handleChange}  required  />
-        <input type="date" name="date" value={eventData.date}  onChange={handleChange} required min={currentDate}/>
-        <input type="number" name="guestCount" placeholder="Guest Count" value={eventData.guestCount}  onChange={handleChange} required />
+          className="event-form-input"
+          type="text" 
+          name="eventName" 
+          placeholder="Event Name" 
+          value={eventData.eventName} 
+          onChange={handleChange} 
+          required
+        />
+        <input 
+          className="event-form-input"
+          type="text" 
+          name="contactNumber"  
+          placeholder="Contact Number"  
+          value={eventData.contactNumber} 
+          onChange={handleChange} 
+          required
+        />
+        <input 
+          className="event-form-input"
+          type="email" 
+          name="email" 
+          placeholder="Email" 
+          value={eventData.email} 
+          onChange={handleChange}  
+          required  
+        />
+        <input 
+          className="event-form-input"
+          type="date" 
+          name="date" 
+          value={eventData.date}  
+          onChange={handleChange} 
+          required 
+          min={currentDate}
+        />
+        <input 
+          className="event-form-input"
+          type="number" 
+          name="guestCount" 
+          placeholder="Guest Count" 
+          value={eventData.guestCount}  
+          onChange={handleChange} 
+          required 
+        />
         <textarea 
-        className="event-add-textarea"
-        name="guestDetails" 
-        placeholder="Guest Details"  
-        value={eventData.guestDetails} 
-        onChange={handleChange}
-      ></textarea>
-
-         <textarea 
-        className="event-add-textarea"
-        name="specialNotes" 
-        placeholder="Special Notes" 
-        value={eventData.specialNotes} 
-        onChange={handleChange}
-      ></textarea>
+          className="event-form-textarea"
+          name="guestDetails" 
+          placeholder="Guest Details"  
+          value={eventData.guestDetails} 
+          onChange={handleChange}
+        ></textarea>
+        <textarea 
+          className="event-form-textarea"
+          name="specialNotes" 
+          placeholder="Special Notes" 
+          value={eventData.specialNotes} 
+          onChange={handleChange}
+        ></textarea>
         
-        <button className="event-add-button" type="submit">Submit</button>
+        <button className="event-form-button" type="submit">Submit</button>
       </form>
     </div>
   );

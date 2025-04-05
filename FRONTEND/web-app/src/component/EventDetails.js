@@ -5,6 +5,7 @@ import "./EventDetails.css";
 
 const EventDetails = () => {
   const [events, setEvents] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -39,14 +40,35 @@ const EventDetails = () => {
     navigate("/update-event", { state: { eventData: event } });
   };
 
+  const filteredEvents = events.filter(event => {
+    const searchLower = searchTerm.toLowerCase();
+    return (
+      event.eventName.toLowerCase().includes(searchLower) ||
+      event.eventType.toLowerCase().includes(searchLower)
+    );
+  });
+
   return (
     <div className="event-details-container">
       <h1 className="event-details-title">All Events</h1>
+      
+      <div className="event-details-search">
+        <input
+          type="text"
+          placeholder="Search by event name or type..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="event-details-search-input"
+        />
+      </div>
+
       <div className="event-details-list">
-        {events.length === 0 ? (
-          <p className="event-details-no-events">No events found.</p>
+        {filteredEvents.length === 0 ? (
+          <p className="event-details-no-events">
+            {searchTerm ? "No events found matching your search." : "No events found."}
+          </p>
         ) : (
-          events.map((event) => (
+          filteredEvents.map((event) => (
             <div key={event._id} className="event-details-card">
               <h3>{event.eventName}</h3>
               <p><strong>Event Type:</strong> {event.eventType}</p>

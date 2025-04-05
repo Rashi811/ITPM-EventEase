@@ -1,9 +1,9 @@
-body {
+.homepage-container {
   margin: 0;
   font-family: Arial, sans-serif;
 }
 
-.navbar {
+.homepage-navbar {
   background-color: #333;
   padding: 10px 20px;
   margin-top: 20px;
@@ -12,7 +12,7 @@ body {
   margin-right: auto;
 }
 
-.nav-links {
+.homepage-nav-links {
   list-style: none;
   margin: 0;
   padding: 0;
@@ -20,44 +20,43 @@ body {
   justify-content: space-around;
 }
 
-.nav-links li {
+.homepage-nav-links li {
   margin: 0 10px;
 }
 
-.nav-links li a {
+.homepage-nav-links li a {
   color: white;
   text-decoration: none;
   font-weight: bold;
   font-size: 16px;
 }
 
-.hero-section {
+.homepage-hero-section {
   display: flex;
   flex-direction: column;
-  align-items: center; /* Keep everything centered */
+  align-items: center;
   background-size: cover;
   background-position: center;
   color: rgb(49, 47, 47);
   padding: 100px 20px;
   text-align: center;
-  font-size:30px;
+  font-size: 30px;
   font-family: 'Poppins', sans-serif;
 }
 
-.hero-section h1 {
+.homepage-title {
   font-size: 2.5em;
-  margin: -50px 0 20px 0; /* Adjusted margin: move up by decreasing top margin */
+  margin: -50px 0 20px 0;
 }
 
-
-.image-carousel {
+.homepage-image-carousel {
   width: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.carousel-image {
+.homepage-carousel-image {
   width: 80%;
   height: 500px;
   object-fit: cover;
@@ -68,50 +67,46 @@ body {
   margin: 0 auto;
 }
 
-/* P tag styling: move text to left of the image */
-.hero-paragraph {
-  font-size: 30px; /* Increase font size */
-  font-style: normal; /* Make text italic */
+.homepage-paragraph {
+  font-size: 30px;
+  font-style: normal;
   color: #333;
-  text-align: left; /* Move text to the left */
-  width: 40%; /* Limit width */
-  margin-right: auto; /* Push to the left */
+  text-align: left;
+  width: 40%;
+  margin-right: auto;
   margin-left: 10%;
-  margin-top: 30px; /* Add some spacing */
+  margin-top: 30px;
 }
 
-.right-text {
+.homepage-right-text {
   text-align: right;
   margin-left: auto;
   margin-right: 5%;
   font-style: normal;
 }
 
-.right-text2 {
-  position: absolute; /* Positions the element relative to the nearest positioned ancestor */
-  bottom: -55%; /* Adjusts the distance from the bottom */
-  left: 40%; /* Moves the element to the center */
-  transform: translateX(-50%); /* Centers the element properly */
+.homepage-right-text2 {
+  position: absolute;
+  bottom: -45%;
+  left: 40%;
+  transform: translateX(-50%);
   text-align: center;
-  width: fit-content; /* Keeps the text compact */
+  width: fit-content;
   font-size: 20px;
   font-style: italic;
-  
-  
 }
-
 
 /* Responsive design */
 @media (max-width: 768px) {
-  .hero-section {
+  .homepage-hero-section {
     text-align: center;
   }
 
-  .image-carousel {
+  .homepage-image-carousel {
     width: 100%;
   }
 
-  .hero-paragraph {
+  .homepage-paragraph {
     width: 80%;
     text-align: center;
     margin: 20px auto;

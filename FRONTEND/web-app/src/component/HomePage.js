@@ -24,9 +24,9 @@ function HomePage() {
   
 
   return (
-    <div className="homePage">
-      <nav className="navbar">
-        <ul className="nav-links">
+    <div className="homepage-container">
+      <nav className="homepage-navbar">
+        <ul className="homepage-nav-links">
           <li><a href="event">Event</a></li>
           <li><a href="venues">Venue</a></li>
           <li><a href="task-dashboard">Task</a></li>
@@ -35,32 +35,29 @@ function HomePage() {
         </ul>
       </nav>
 
-      <div className="hero-section">
-        <h1>You Keep Dreaming... We'll Keep Working...</h1>
+      <div className="homepage-hero-section">
+        <h1 className="homepage-title">You Keep Dreaming... We'll Keep Working...</h1>
         <br /><br />
         
-        <div className="image-carousel">
-          <img src={images[currentImageIndex]} alt="EventEase" className="carousel-image" />
+        <div className="homepage-image-carousel">
+          <img src={images[currentImageIndex]} alt="EventEase" className="homepage-carousel-image" />
         </div>
 
-<br></br>
+        <br></br>
 
         {/* First paragraph (left side of the image) */}
-        <p className="hero-paragraph left-text">
+        <p className="homepage-paragraph homepage-left-text">
           Plan your event effortlessly with EventEase. We handle the details, you enjoy the moment.
         </p>
 
         {/* Second paragraph (right side of the image) */}
-        <p className="hero-paragraph right-text">
+        <p className="homepage-paragraph homepage-right-text">
           Experience simplified event planning with our dedicated team. Your perfect event starts here!
         </p>
 
-
-
-        <p className="hero-paragraph right-text2">
+        <p className="homepage-paragraph homepage-right-text2">
           #Sri Lanka's No.1 Event Management Company!
         </p>
-
       </div>
     </div>
   );

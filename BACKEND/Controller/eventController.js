@@ -1,3 +1,4 @@
+// BACKEND/Controller/eventController.js
 const Event = require("../Model/Event");
 
 // Get All Events
@@ -13,6 +14,28 @@ const getAllEvents = async (req, res) => {
     }
 };
 
+// Search Events
+const searchEvents = async (req, res) => {
+    try {
+        const { searchTerm } = req.query;
+        
+        const events = await Event.find({
+            $or: [
+                { eventName: { $regex: searchTerm, $options: 'i' } },
+                { eventType: { $regex: searchTerm, $options: 'i' } }
+            ]
+        });
+
+        if (!events || events.length === 0) {
+            return res.status(404).json({ message: "No events found matching your search" });
+        }
+
+        return res.status(200).json({ events });
+    } catch (err) {
+        return res.status(500).json({ message: "Error searching events", error: err.message });
+    }
+};
+
 //create new event
 const addEvents = async (req, res) => {
     const { eventType, eventName, contactNumber, email, date, guestCount, guestDetails, specialNotes } = req.body;
@@ -20,12 +43,11 @@ const addEvents = async (req, res) => {
     try {
         const event = new Event({ eventType, eventName, contactNumber, email, date, guestCount, guestDetails, specialNotes });
         await event.save();
-        return res.status(201).json(event); // Directly return the event object
+        return res.status(201).json(event);
     } catch (err) {
         return res.status(500).json({ message: "Error inserting event", error: err.message });
     }
 };
-
 
 // Get Event by ID
 const getById = async (req, res) => {
@@ -79,9 +101,12 @@ const deleteEvent = async (req, res) => {
     }
 };
 
-// Export Controllers
-exports.getAllEvents = getAllEvents;
-exports.addEvents = addEvents;
-exports.getById = getById;
-exports.updateEvent = updateEvent;
-exports.deleteEvent = deleteEvent;
+// Export all functions
+module.exports = {
+    getAllEvents,
+    searchEvents,
+    addEvents,
+    getById,
+    updateEvent,
+    deleteEvent
+};
