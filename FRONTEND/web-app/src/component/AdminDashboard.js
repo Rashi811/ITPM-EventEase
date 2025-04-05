@@ -13,11 +13,12 @@ const AdminDashboard = () => {
     <div className="admin-dashboard">
       <nav className="admin-navbar">
         <div className="nav-links">
-          <button onClick={() => handleNavigation('events')}>Event</button>
+          <button onClick={() => handleNavigation('admin-event')}>Event</button>
           <button onClick={() => handleNavigation('venues')}>Venue</button>
           <button onClick={() => handleNavigation('tasks')}>Task</button>
           <button onClick={() => handleNavigation('reminders')}>Reminder</button>
         </div>
+        
       </nav>
       <div className="admin-content">
         <h1>Admin Dashboard</h1>

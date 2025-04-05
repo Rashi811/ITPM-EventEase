@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import "./EventHome.css";
+import "./AdminEvent.css";
 
 const images = [
   "/images/img1.jpg",
@@ -10,7 +10,7 @@ const images = [
   "/images/img5.jpg"
 ];
 
-const EventHome = () => {
+const AdminEvent = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   useEffect(() => {
@@ -22,7 +22,7 @@ const EventHome = () => {
   }, []);
 
   return (
-    <div className="event-home">
+    <div className="admin-event">
       <div className="content">
         {/* Left Side: Text */}
         <div className="text-section">
@@ -33,7 +33,10 @@ const EventHome = () => {
           </p>
           <div className="buttons">
             <Link to="/add-event" className="btn">Add Event</Link>
-           
+            <Link to="/event-details" className="btn">Event Details</Link>
+            <Link to="/all-reports" className="btn">All Reports</Link>
+            <Link to="/add-report" className="btn">Add Report</Link>
+
           </div>
         </div>
 
@@ -46,4 +49,4 @@ const EventHome = () => {
   );
 };
 
-export default EventHome;
+export default AdminEvent;

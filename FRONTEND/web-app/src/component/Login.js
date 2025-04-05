@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../component/AuthContext';
 import './Login.css';
 
 const Login = () => {
   const navigate = useNavigate();
+  const { login } = useAuth();
   const [formData, setFormData] = useState({
     username: '',
     password: ''
@@ -29,12 +31,13 @@ const Login = () => {
     try {
       if (formData.username === adminCredentials.username && 
           formData.password === adminCredentials.password) {
-        // Navigate to admin dashboard
+        login({ username: formData.username, isAdmin: true });
         navigate('/admin-dashboard');
       } else {
         // Here you would typically make an API call to your backend
         // For now, we'll just navigate to home for regular users
-        navigate('/home');
+        login({ username: formData.username, isAdmin: false });
+        navigate('/');
       }
     } catch (err) {
       setError('Incorrect login credentials. Please try again.');
@@ -72,7 +75,7 @@ const Login = () => {
           <button type="submit" className="login-button">Login</button>
         </form>
         <p className="signup-link">
-          Don't have an account? <span onClick={() => navigate('/signup')}>Sign Up</span>
+          Don't have an account? <span onClick={() => navigate('/signUp')}>Sign Up</span>
         </p>
       </div>
     </div>

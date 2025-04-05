@@ -1,5 +1,7 @@
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "./component/AuthContext";
+import ProtectedRoute from "./component/ProtectedRoute";
 import HomePage from "./component/HomePage";
 import EventHome from "./component/EventHome";
 import AddEvent from "./component/AddEvent";
@@ -11,6 +13,7 @@ import Footer from "./component/Footer";
 import AboutUs from "./component/AboutUs";
 import AddReport from "./component/AddReport";
 import AllReports from "./component/AllReports";
+import AdminEvent from './component/AdminEvent';
 import SignUp from './component/SignUp';
 import Login from './component/Login';
 import AdminDashboard from './component/AdminDashboard';
@@ -29,47 +32,121 @@ import TaskCreateForm from "./component/Task/CreateTaskForm";
 import TaskList from "./component/Task/TaskList";
 import UpdateTaskForm from "./component/Task/UpdateTask";
 
-
-
 function App() {
   return (
-    <BrowserRouter>
-      <Header />
-      <div>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/event" element={<EventHome />} />
-          <Route path="/add-event" element={<AddEvent />} />
-          <Route path="/event-summary" element={<EventSummary />} />
-          <Route path="/update-event" element={<UpdateEvent />} />
-          <Route path="/event-details" element={<EventDetails />} />
-          <Route path="/add-report" element={<AddReport />} />
-          <Route path="/all-reports" element={<AllReports />} />
-          <Route path="/about" element={<AboutUs />} />
-          <Route path="/signUp" element={<SignUp />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/admin-dashboard" element={<AdminDashboard />} />
-          <Route path="/" element={<Login />} />
-          
+    <AuthProvider>
+      <BrowserRouter>
+        <Header />
+        <div>
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route path="/signUp" element={<SignUp />} />
+            <Route path="/about" element={<AboutUs />} />
+            <Route path="/admin/admin-event" element={<AdminEvent />} />
 
-          <Route path="/task-dashboard" element={<TaskDashboard />} />
-          <Route path="/create-task" element={<TaskCreateForm />} />
-          <Route path="/task-list" element={<TaskList />} />
-          <Route path="/update-task/:id" element={<UpdateTaskForm />} />
-          
-          <Route path="/venues" element={<MainVenuePage />} />
-          <Route path="/book" element={<BookingPage />} />
-          <Route path="/suggest-venue" element={<SuggestVenueForm />} />
-          <Route path="/booking-calendar" element={<BookingCalendar />} />
-          <Route path="/booking-form" element={<BookingForm />} />
-          <Route path="/admin-venue" element={<AdminVenue />} />
-
-
-        </Routes>
-      </div>
-      <Footer />
-    </BrowserRouter>
+            
+            {/* Protected Routes */}
+            <Route path="/" element={
+              <ProtectedRoute>
+                <HomePage />
+              </ProtectedRoute>
+            } />
+            <Route path="/event" element={
+              <ProtectedRoute>
+                <EventHome />
+              </ProtectedRoute>
+            } />
+            <Route path="/add-event" element={
+              <ProtectedRoute>
+                <AddEvent />
+              </ProtectedRoute>
+            } />
+            <Route path="/event-summary" element={
+              <ProtectedRoute>
+                <EventSummary />
+              </ProtectedRoute>
+            } />
+            <Route path="/update-event" element={
+              <ProtectedRoute>
+                <UpdateEvent />
+              </ProtectedRoute>
+            } />
+            <Route path="/event-details" element={
+              <ProtectedRoute>
+                <EventDetails />
+              </ProtectedRoute>
+            } />
+            <Route path="/add-report" element={
+              <ProtectedRoute>
+                <AddReport />
+              </ProtectedRoute>
+            } />
+            <Route path="/all-reports" element={
+              <ProtectedRoute>
+                <AllReports />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin-dashboard" element={
+              <ProtectedRoute>
+                <AdminDashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/task-dashboard" element={
+              <ProtectedRoute>
+                <TaskDashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/create-task" element={
+              <ProtectedRoute>
+                <TaskCreateForm />
+              </ProtectedRoute>
+            } />
+            <Route path="/task-list" element={
+              <ProtectedRoute>
+                <TaskList />
+              </ProtectedRoute>
+            } />
+            <Route path="/update-task/:id" element={
+              <ProtectedRoute>
+                <UpdateTaskForm />
+              </ProtectedRoute>
+            } />
+            <Route path="/venues" element={
+              <ProtectedRoute>
+                <MainVenuePage />
+              </ProtectedRoute>
+            } />
+            <Route path="/book" element={
+              <ProtectedRoute>
+                <BookingPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/suggest-venue" element={
+              <ProtectedRoute>
+                <SuggestVenueForm />
+              </ProtectedRoute>
+            } />
+            <Route path="/booking-calendar" element={
+              <ProtectedRoute>
+                <BookingCalendar />
+              </ProtectedRoute>
+            } />
+            <Route path="/booking-form" element={
+              <ProtectedRoute>
+                <BookingForm />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin-venue" element={
+              <ProtectedRoute>
+                <AdminVenue />
+              </ProtectedRoute>
+            } />
+          </Routes>
+        </div>
+        <Footer />
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 
-export default App;
+export default App; 
