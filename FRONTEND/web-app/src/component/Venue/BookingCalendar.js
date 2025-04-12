@@ -69,7 +69,7 @@ const BookingCalendar = () => {
         requirements: booking.specificRequirements
       }));
 
-      const suggestionEvents = suggestionsRes.data
+      const suggestionEvents = suggestionsRes.data.data
         .filter(suggestion => suggestion.preferredDate)
         .map(suggestion => ({
           id: suggestion._id,
@@ -148,7 +148,6 @@ const BookingCalendar = () => {
         endAccessor="end"
         defaultDate={currentDate}
         date={currentDate}
-        views={["month", "week", "day", "agenda"]}
         onNavigate={(date) => setCurrentDate(date)}
         eventPropGetter={eventStyleGetter}
         components={{

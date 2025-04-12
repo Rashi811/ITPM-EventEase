@@ -1,5 +1,3 @@
-/* BookingCalendar.css */
-
 /* Main container styles */
 .booking-calendar-container {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -66,7 +64,7 @@
   background-color: #17a2b8;
 }
 
-/* Custom event styles - IMPORTANT CHANGES HERE */
+/* Custom event styles - Important changes for status colors */
 .rbc-event {
   border: none !important;
   padding: 2px 5px !important;
@@ -108,28 +106,32 @@
   color: white;
 }
 
-/* Specific status colors - THESE ARE CRUCIAL */
-.rbc-event[title*="Approved"],
+/* Specific status colors (Dynamic) */
 .rbc-event[data-status="approved"] {
   background-color: #28a745 !important;
 }
 
-.rbc-event[title*="Pending"],
 .rbc-event[data-status="pending"] {
   background-color: #ffc107 !important;
 }
 
-.rbc-event[title*="Rejected"],
 .rbc-event[data-status="rejected"] {
   background-color: #dc3545 !important;
 }
 
-.rbc-event[title*="Suggestion"],
 .rbc-event[data-status="suggestion"] {
   background-color: #17a2b8 !important;
 }
 
-/* Calendar overrides */
+/* Tooltip/hover for event details */
+.rbc-event:hover {
+  opacity: 1 !important;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.15);
+  z-index: 1;
+  transform: scale(1.02);
+}
+
+/* Calendar container overrides */
 .rbc-calendar {
   background-color: white;
   border-radius: 8px;
@@ -150,18 +152,6 @@
 
 .rbc-today {
   background-color: #e8f4fc;
-}
-
-.rbc-event {
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.rbc-event:hover {
-  opacity: 1 !important;
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.15);
-  z-index: 1;
-  transform: scale(1.02);
 }
 
 .rbc-toolbar {
