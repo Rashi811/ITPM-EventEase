@@ -42,11 +42,18 @@
   #TaskRightDiv{
     display: inline-flex !important;
     justify-content: center;
-    background-image: linear-gradient(to right, rgba(51, 51, 52, 0.8) , rgba(11, 11, 11, 0.8));
+    background-image: linear-gradient(to right, rgba(0, 59, 110, 0.8) , rgba(0, 58, 128, 0.8));
     width:35%;
     justify-content: space-between;
     padding: 20px 40px;
     border-radius: 5px;
+  }
+
+  #image-div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;        
   }
   
   ul {
@@ -70,20 +77,11 @@
   #TaskButton{
     display: inline;
     margin: 0px 10px;
-    background-image: linear-gradient(to right, rgba(51, 51, 52, 0.8) , rgba(11, 11, 11, 0.8));
+    background-image: linear-gradient(to right, rgba(4, 103, 11, 0.8) , rgba(0, 137, 14, 0.8));
     padding: 10px;
     color: white;
     border-radius: 5px;
     width: 200px !important;
-  }
-   
-  #TaskButton {
-    display: inline;
-    background-image: linear-gradient(to right, rgba(51, 51, 52, 0.8) , rgba(11, 11, 11, 0.8));
-    color: white;
-    border-radius: 5px;
-    width: 200px !important;
-    padding: 10px;
   }
   
   #image-div{
