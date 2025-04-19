@@ -123,7 +123,9 @@
   }
   
   .button-group {
-    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 2.5rem;
   }
 
   .create-btn {
@@ -150,6 +152,7 @@
 
   .filter-controls {
     display: flex;
+    justify-content: space-between;
     flex-wrap: wrap;
     gap: 1rem;
     margin-bottom: 1rem;
@@ -174,17 +177,23 @@
   .pdf-btn {
     background-color: #58046b;
     color: white;
+    padding: 12px 16px;
     border: none;
+    border-radius: 4px;
     cursor: pointer;
-    transition: 0.3s ease;
+    font-size: 0.9rem;
+    transition: all 0.2s;
   }
 
   .excel-btn {
     background-color: #58046b;
     color: white;
+    padding: 12px 16px;
     border: none;
+    border-radius: 4px;
     cursor: pointer;
-    transition: 0.3s ease;
+    font-size: 0.9rem;
+    transition: all 0.2s;
   }
   
   .excel-btn:hover {

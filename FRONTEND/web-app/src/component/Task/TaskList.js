@@ -17,6 +17,7 @@ const TaskList = () => {
   const [personFilter, setPersonFilter] = useState('All');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
 
   const navigate = useNavigate();
 
@@ -60,8 +61,18 @@ const TaskList = () => {
       filtered = filtered.filter(task => new Date(task.taskDate) <= new Date(endDate));
     }
 
+    if (searchTerm.trim() !== '') {
+      const lowerSearch = searchTerm.toLowerCase();
+      filtered = filtered.filter(task =>
+        task.taskName.toLowerCase().includes(lowerSearch) ||
+        task.taskID.toLowerCase().includes(lowerSearch) ||
+        task.process.toLowerCase().includes(lowerSearch) ||
+        task.person.toLowerCase().includes(lowerSearch)
+      );
+    }
+
     setFilteredTasks(filtered);
-  }, [statusFilter, personFilter, startDate, endDate, tasks]);
+  }, [statusFilter, personFilter, startDate, endDate, searchTerm, tasks]);
 
   const handleDelete = async (id) => {
     try {
@@ -83,7 +94,6 @@ const TaskList = () => {
   if (!Array.isArray(tasks)) return <div className="error">Invalid tasks data format</div>;
   if (filteredTasks.length === 0) return <div className="no-tasks">No tasks found</div>;
 
-  //PDF File Download
   const generatePDF = () => {
     const doc = new jsPDF();
     const currentDate = new Date().toLocaleDateString();
@@ -118,7 +128,6 @@ const TaskList = () => {
     doc.save('task_report.pdf');
   };
 
-  //Excel File Download
   const generateExcel = () => {
     const worksheetData = filteredTasks.map(task => ({
       "Task Name": task.taskName,
@@ -180,31 +189,43 @@ const TaskList = () => {
           />
         </label>
 
-        <label className="download-buttons">
-          <button className="pdf-btn" onClick={generatePDF}>Download PDF</button>
-          <button className="excel-btn" onClick={generateExcel}>Download Excel</button>
+        <label>
+          Search:
+          <input
+            type="text"
+            placeholder="Search tasks..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
         </label>
       </div>
 
       <div className="button-group">
-        <button className="create-btn" onClick={() => navigate('/create-task')}>
-          Create New Task
-        </button>
-        <button className="dashboard-btn" onClick={() => navigate('/task-dashboard')}>
-          DashBoard
-        </button>
+        <div>
+          <button className="create-btn" onClick={() => navigate('/create-task')}>
+            Create New Task
+          </button>
+          <button className="dashboard-btn" onClick={() => navigate('/task-dashboard')}>
+            DashBoard
+          </button>
+        </div>
+        <div>
+          <button className="pdf-btn" onClick={generatePDF}>Download PDF</button>
+          <button className="excel-btn" onClick={generateExcel}>Download Excel</button>
+        </div>
       </div>
+
       <div className='table-container'>
         <table className="task-table">
           <thead>
             <tr>
-            <th style={{ width: '15%' }}>Task Name</th>
-            <th style={{ width: '10%' }}>ID</th>
-            <th style={{ width: '10%' }}>Date</th>
-            <th style={{ width: '10%' }}>Process</th>
-            <th style={{ width: '15%' }}>Assigned To</th>
-            <th style={{ width: '10%' }}>Status</th>
-            <th style={{ width: '30%', textAlign: 'center'  }}>Actions</th>
+              <th style={{ width: '15%' }}>Task Name</th>
+              <th style={{ width: '10%' }}>ID</th>
+              <th style={{ width: '10%' }}>Date</th>
+              <th style={{ width: '10%' }}>Process</th>
+              <th style={{ width: '15%' }}>Assigned To</th>
+              <th style={{ width: '10%' }}>Status</th>
+              <th style={{ width: '30%', textAlign: 'center' }}>Actions</th>
             </tr>
           </thead>
           <tbody>
