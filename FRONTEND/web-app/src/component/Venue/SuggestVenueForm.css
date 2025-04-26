@@ -24,7 +24,7 @@
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  color: transparent; /* Fallback for browsers that don't support text-fill-color */
+  color: transparent;
 }
 
 .suggest-venue-form {
@@ -41,12 +41,12 @@
 
 .suggest-venue-container .form-section:nth-child(1),
 .suggest-venue-container .form-section:nth-child(2) {
-  flex: 1 1 45%; /* Take up 45% of the row */
+  flex: 1 1 45%;
 }
 
 .suggest-venue-container .form-section:nth-child(3),
 .suggest-venue-container .form-section:nth-child(4) {
-  flex: 1 1 45%; /* Take up 45% of the row */
+  flex: 1 1 45%;
 }
 
 .form-section {
@@ -231,7 +231,7 @@ button[type="submit"]:disabled {
   }
 
   .suggest-venue-container .form-section {
-    flex: 1 1 100%; /* Stack all containers on smaller screens */
+    flex: 1 1 100%;
   }
 }
 
@@ -252,6 +252,6 @@ button[type="submit"]:disabled {
   }
 
   .suggest-venue-container .form-section {
-    flex: 1 1 100%; /* Stack all containers on smaller screens */
+    flex: 1 1 100%;
   }
 }

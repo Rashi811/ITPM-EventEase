@@ -25,6 +25,8 @@ import SuggestVenueForm from "./component/Venue/SuggestVenueForm";
 import BookingCalendar from "./component/Venue/BookingCalendar";
 import BookingForm from "./component/Venue/BookingForm";
 import AdminVenue from "./component/Venue/AdminVenue";
+import AdminVenueHome from "./component/Venue/AdminVenueHome";
+
 
 // Gangani
 import TaskDashboard from "./component/Task/TaskDashboard";
@@ -91,7 +93,7 @@ function App() {
                 <AdminDashboard />
               </ProtectedRoute>
             } />
-            <Route path="/task-dashboard" element={
+            <Route path="/admin/task-dashboard" element={
               <ProtectedRoute>
                 <TaskDashboard />
               </ProtectedRoute>
@@ -141,6 +143,8 @@ function App() {
                 <AdminVenue />
               </ProtectedRoute>
             } />
+            <Route path="/admin/admin-venue-home" element={<AdminVenueHome />} />
+
           </Routes>
         </div>
         <Footer />

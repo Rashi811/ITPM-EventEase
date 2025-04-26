@@ -1,94 +1,25 @@
 const express = require('express');
-const nodemailer = require('nodemailer');
 const Booking = require('../Model/Booking');
+const { sendBookingConfirmation } = require('../services/emailService');
 const router = express.Router();
+const {
+  getAllBookings,
+  getBookingById,
+  createBooking,
+  updateBooking,
+  deleteBooking,
+  updateBookingStatus
+} = require('../Controller/bookingController');
 
-// Setup Nodemailer transporter for sending emails
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
-
-// Function to send email notifications
-const sendEmailNotification = (email, status) => {
-  const subject = `Your Venue Booking is ${status}`;
-  const message =
-    status === 'approved'
-      ? 'Your booking has been approved!'
-      : status === 'rejected'
-      ? 'Your booking has been rejected!'
-      : status === 'updated'
-      ? 'Your booking has been updated!'
-      : 'Your booking has been deleted!';
-
-  const mailOptions = {
-    from: process.env.EMAIL_USER,
-    to: email,
-    subject: subject,
-    text: message,
-  };
-
-  transporter.sendMail(mailOptions, (error, info) => {
-    if (error) {
-      console.error('Error sending email:', error);
-    } else {
-      console.log('Email sent:', info.response);
-    }
-  });
-};
-
-// Create a new booking
-router.post('/bookings', async (req, res) => {
-  try {
-    const { customerName, customerEmail, phoneNumber, venueId, eventType, date, time, specificRequirements } = req.body;
-
-    // Check if the booking already exists
-    const existingBooking = await Booking.findOne({ venueId, date, time });
-    if (existingBooking) {
-      return res.status(400).json({ message: 'The venue is already booked for this date and time.' });
-    }
-
-    const newBooking = new Booking({
-      customerName,
-      customerEmail,
-      phoneNumber,
-      venueId,
-      eventType,
-      date,
-      time,
-      specificRequirements,
-      status: 'Pending',
-    });
-
-    await newBooking.save();
-    sendEmailNotification(customerEmail, 'pending');
-
-    res.status(201).json({
-      message: 'Booking successfully created',
-      booking: newBooking,
-    });
-  } catch (err) {
-    console.error('Error creating booking:', err);
-    res.status(500).json({ error: 'Server error while creating booking' });
-  }
-});
-
+// Booking routes
+router.get('/', getAllBookings);
+router.get('/:id', getBookingById);
+router.post('/', createBooking);
+router.put('/:id', updateBooking);
+router.delete('/:id', deleteBooking);
+router.put('/:id/status', updateBookingStatus);
 
 // Fetch all bookings
-router.get('/bookings', async (req, res) => {
-  try {
-    const bookings = await Booking.find(); // Fetch data from MongoDB
-    res.json(bookings);
-  } catch (err) {
-    console.error("Error fetching bookings:", err);
-    res.status(500).json({ error: 'Server error while fetching bookings' });
-  }
-});
-
-
 router.get('/booked-dates', async (req, res) => {
   try {
       const bookings = await Booking.find({}, 'date'); // Fetch only the date field
@@ -99,91 +30,71 @@ router.get('/booked-dates', async (req, res) => {
   }
 });
 
-
-
-
 // Approve booking
-router.put('/bookings/approved/:id', async (req, res) => {
+router.put('/approved/:id', async (req, res) => {
+  console.log('Received request to approve booking:', req.params.id);
   try {
+    console.log('Finding booking in database...');
     const booking = await Booking.findByIdAndUpdate(
       req.params.id,
       { status: 'approved' },
       { new: true }
     );
+    console.log('Booking found:', booking);
+
     if (!booking) {
+      console.log('Booking not found');
       return res.status(404).json({ message: 'Booking not found' });
     }
-    sendEmailNotification(booking.customerEmail, 'approved');
+    
+    try {
+      console.log('Attempting to send approval email...');
+      await sendBookingConfirmation(booking);
+      console.log('Approval email sent successfully');
+    } catch (emailError) {
+      console.error('Failed to send approval email:', emailError);
+      // Don't fail the request if email fails
+    }
+    
+    console.log('Sending success response');
     res.json(booking);
   } catch (err) {
-    console.error('Error approving booking:', err);
+    console.error('Error in approve booking route:', err);
     res.status(500).json({ error: 'Server error while approving booking' });
   }
 });
 
 // Reject booking
-router.post('/bookings/reject/:id', async (req, res) => {
+router.put('/reject/:id', async (req, res) => {
+  console.log('Received request to reject booking:', req.params.id);
   try {
+    console.log('Finding booking in database...');
     const booking = await Booking.findByIdAndUpdate(
       req.params.id,
       { status: 'rejected' },
       { new: true }
     );
+    console.log('Booking found:', booking);
+
     if (!booking) {
+      console.log('Booking not found');
       return res.status(404).json({ message: 'Booking not found' });
     }
-    sendEmailNotification(booking.customerEmail, 'rejected');
+    
+    try {
+      console.log('Attempting to send rejection email...');
+      await sendBookingConfirmation(booking);
+      console.log('Rejection email sent successfully');
+    } catch (emailError) {
+      console.error('Failed to send rejection email:', emailError);
+      // Don't fail the request if email fails
+    }
+    
+    console.log('Sending success response');
     res.json(booking);
   } catch (err) {
-    console.error('Error rejecting booking:', err);
+    console.error('Error in reject booking route:', err);
     res.status(500).json({ error: 'Server error while rejecting booking' });
-  }
-});
-
-router.put('/bookings/:id', async (req, res) => {
-  try {
-    console.log("Updating booking with ID:", req.params.id); // Debugging log
-
-    // Check if the booking exists
-    const existingBooking = await Booking.findById(req.params.id);
-    if (!existingBooking) {
-      return res.status(404).json({ message: 'Booking not found' });
-    }
-
-    // Update booking
-    const updatedBooking = await Booking.findByIdAndUpdate(
-      req.params.id,
-      { $set: req.body }, // Ensure only necessary fields are updated
-      { new: true, runValidators: true } // Return updated document & validate data
-    );
-
-    console.log("Updated Booking:", updatedBooking); // Debugging log
-
-    // Send email notification if customer email exists
-    if (updatedBooking.customerEmail) {
-      sendEmailNotification(updatedBooking.customerEmail, 'updated');
-    }
-
-    res.json(updatedBooking);
-  } catch (err) {
-    console.error('Error updating booking:', err);
-    res.status(500).json({ error: 'Server error while updating booking' });
-  }
-});
-
-
-// Delete booking
-router.delete('/bookings/:id', async (req, res) => {
-  try {
-    const booking = await Booking.findByIdAndDelete(req.params.id);
-    if (!booking) {
-      return res.status(404).json({ message: 'Booking not found' });
-    }
-    sendEmailNotification(booking.customerEmail, 'deleted');
-    res.json({ message: 'Booking deleted successfully' });
-  } catch (err) {
-    console.error('Error deleting booking:', err);
-    res.status(500).json({ error: 'Server error while deleting booking' });
   }
 });
 
@@ -195,6 +106,28 @@ router.get('/availability/:venueId', async (req, res) => {
   } catch (error) {
     console.error('Error fetching availability:', error);
     res.status(500).json({ error: 'Error checking venue availability' });
+  }
+});
+
+// Test email endpoint
+router.post('/test-email', async (req, res) => {
+  console.log('Testing email service...');
+  try {
+    const testBooking = {
+      customerName: 'Test User',
+      customerEmail: 'nethmiruvindya10@gmail.com',
+      status: 'approved',
+      venueName: 'Test Venue',
+      eventType: 'Test Event',
+      date: new Date(),
+      time: '10:00 AM'
+    };
+
+    await sendBookingConfirmation(testBooking);
+    res.json({ message: 'Test email sent successfully' });
+  } catch (error) {
+    console.error('Test email failed:', error);
+    res.status(500).json({ error: 'Failed to send test email' });
   }
 });
 

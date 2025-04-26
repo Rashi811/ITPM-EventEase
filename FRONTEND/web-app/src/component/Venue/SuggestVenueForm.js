@@ -22,7 +22,7 @@ const SuggestVenueForm = () => {
 
   const validateForm = () => {
     const errors = {};
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const emailRegex = /^[a-z0-9]+@[a-z0-9]+\.[a-z]{2,}$/;
     const phoneRegex = /^\d{10}$/;
 
     if (!formData.clientName.trim()) errors.clientName = "Your name is required";
@@ -33,15 +33,25 @@ const SuggestVenueForm = () => {
     }
     if (!formData.email.trim()) {
       errors.email = "Email is required";
-    } else if (!emailRegex.test(formData.email)) {
-      errors.email = "Please provide a valid email address";
+    } else if (!emailRegex.test(formData.email.toLowerCase())) {
+      errors.email = "Please enter a valid email address (lowercase letters and numbers only)";
     }
     if (!formData.venueName.trim()) errors.venueName = "Venue name is required";
     if (!formData.location.trim()) errors.location = "Location is required";
     if (!formData.capacity || formData.capacity < 1) 
       errors.capacity = "Capacity must be at least 1";
     if (!formData.eventType.trim()) errors.eventType = "Event type is required";
-    if (!formData.date.trim()) errors.date = "Event date is required";
+    if (!formData.date.trim()) {
+      errors.date = "Event date is required";
+    } else {
+      const selectedDate = new Date(formData.date);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      
+      if (selectedDate < today) {
+        errors.date = "Cannot select a past date";
+      }
+    }
     if (!formData.time.trim()) errors.time = "Event time is required";
 
     setValidationErrors(errors);
@@ -50,7 +60,13 @@ const SuggestVenueForm = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    
+    // Convert email to lowercase as user types
+    if (name === 'email') {
+      setFormData((prev) => ({ ...prev, [name]: value.toLowerCase() }));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
 
     if (validationErrors[name]) {
       setValidationErrors((prev) => ({ ...prev, [name]: "" }));
@@ -251,15 +267,37 @@ const SuggestVenueForm = () => {
 
           <div className="form-group">
             <label htmlFor="time">Event Time *</label>
-            <input
-              type="time"
+            <select
               id="time"
               name="time"
               value={formData.time}
               onChange={handleChange}
               className={validationErrors.time ? "error" : ""}
-            />
-            {validationErrors.time && <span className="error-text">{validationErrors.time}</span>}
+            >
+              <option value="">Select Time</option>
+              {[
+                "8:00 AM", "8:30 AM",
+                "9:00 AM", "9:30 AM",
+                "10:00 AM", "10:30 AM",
+                "11:00 AM", "11:30 AM",
+                "12:00 PM", "12:30 PM",
+                "1:00 PM", "1:30 PM",
+                "2:00 PM", "2:30 PM",
+                "3:00 PM", "3:30 PM",
+                "4:00 PM", "4:30 PM",
+                "5:00 PM", "5:30 PM",
+                "6:00 PM", "6:30 PM",
+                "7:00 PM", "7:30 PM",
+                "8:00 PM", "8:30 PM",
+                "9:00 PM", "9:30 PM",
+                "10:00 PM"
+              ].map((time, index) => (
+                <option key={index} value={time}>{time}</option>
+              ))}
+            </select>
+            {validationErrors.time && (
+              <span className="error-text">{validationErrors.time}</span>
+            )}
           </div>
         </div>
 

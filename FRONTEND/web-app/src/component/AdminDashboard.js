@@ -14,8 +14,8 @@ const AdminDashboard = () => {
       <nav className="admin-navbar">
         <div className="nav-links">
           <button onClick={() => handleNavigation('admin-event')}>Event</button>
-          <button onClick={() => handleNavigation('venues')}>Venue</button>
-          <button onClick={() => handleNavigation('tasks')}>Task</button>
+          <button onClick={() => handleNavigation('admin-venue-home')}>Venue</button>
+          <button onClick={() => handleNavigation('task-dashboard')}>Task</button>
           <button onClick={() => handleNavigation('reminders')}>Reminder</button>
         </div>
         
@@ -23,7 +23,6 @@ const AdminDashboard = () => {
       <div className="admin-content">
         <h1>Admin Dashboard</h1>
         <p>Welcome to the EventEase Admin Panel</p>
-        <p>Select an option from the navigation bar above to manage different aspects of the system.</p>
       </div>
     </div>
   );

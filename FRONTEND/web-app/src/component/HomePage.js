@@ -25,15 +25,7 @@ function HomePage() {
 
   return (
     <div className="homepage-container">
-      <nav className="homepage-navbar">
-        <ul className="homepage-nav-links">
-          <li><a href="event">Event</a></li>
-          <li><a href="venues">Venue</a></li>
-          <li><a href="task-dashboard">Task</a></li>
-          <li><a href="chat">Chat Us</a></li>
-          <li><a href="about">About</a></li>
-        </ul>
-      </nav>
+      
 
       <div className="homepage-hero-section">
         <h1 className="homepage-title">You Keep Dreaming... We'll Keep Working...</h1>

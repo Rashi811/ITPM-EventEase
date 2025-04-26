@@ -1,6 +1,17 @@
+
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './AdminVenue.css';
+import { jsPDF } from 'jspdf';
+import 'jspdf-autotable';
+import { 
+  FaSearch, 
+  FaFileExport, 
+  FaEdit, 
+  FaTrash, 
+  FaCheck, 
+  FaTimes 
+} from 'react-icons/fa';
 
 const AdminVenue = () => {
   // State management
@@ -23,8 +34,14 @@ const AdminVenue = () => {
     requirements: '',
     status: 'pending',
     venueName: '',
-    venueId: ''
+    venueId: '',
+    capacity: '',
+    location: ''
   });
+
+  // New state for search and filters
+  const [searchTerm, setSearchTerm] = useState('');
+  const [searchField, setSearchField] = useState('name');
 
   // Hardcoded venue data to match MainVenuePage
   const venues = [
@@ -40,35 +57,50 @@ const AdminVenue = () => {
   const fetchData = async () => {
     try {
       setLoading(true);
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+      
+      // Check if the server is running
+      try {
+        await axios.get(`${apiUrl}/health`);
+      } catch (err) {
+        setError('Backend server is not running. Please start the server and try again.');
+        setLoading(false);
+        return;
+      }
+
       const [bookingsRes, suggestionsRes] = await Promise.all([
-        axios.get(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/bookings`),
-        axios.get(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/venue-suggestions`)
+        axios.get(`${apiUrl}/api/bookings`),
+        axios.get(`${apiUrl}/api/venue-suggestions`)
       ]);
 
       // Process bookings to include venue names
-      const processedBookings = bookingsRes.data.map(booking => {
+      const bookingsData = bookingsRes.data.data || bookingsRes.data;
+      const processedBookings = Array.isArray(bookingsData) ? bookingsData.map(booking => {
         const venue = venues.find(v => v._id === booking.venueId);
         return {
           ...booking,
           venueName: venue ? venue.name : 'Unknown Venue',
           venueLocation: venue ? venue.location : ''
         };
-      });
+      }) : [];
 
-      setBookings(Array.isArray(processedBookings) ? processedBookings : []);
+      setBookings(processedBookings);
       
       // Process suggestions
-      let suggestionsData = suggestionsRes.data;
-      if (suggestionsData && typeof suggestionsData === 'object' && !Array.isArray(suggestionsData)) {
-        suggestionsData = suggestionsData.suggestions || [];
-      }
+      const suggestionsData = suggestionsRes.data.data || suggestionsRes.data;
       setSuggestions(Array.isArray(suggestionsData) ? suggestionsData : []);
       
       setLoading(false);
     } catch (err) {
-      setError('Failed to load data. Please try again later.');
-      setLoading(false);
       console.error('Error fetching data:', err);
+      if (err.code === 'ERR_NETWORK') {
+        setError('Unable to connect to the server. Please check if the backend server is running.');
+      } else if (err.response) {
+        setError(`Server error: ${err.response.data.message || 'Something went wrong'}`);
+      } else {
+        setError('Failed to load data. Please try again later.');
+      }
+      setLoading(false);
     }
   };
 
@@ -84,42 +116,313 @@ const AdminVenue = () => {
   // Handle status change (approve/reject)
   const handleStatusChange = async (id, newStatus, type) => {
     try {
+      if (!id) {
+        setError(`Invalid ${type} ID. Please try again.`);
+        return;
+      }
+
+      const baseUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
       const endpoint = type === 'booking' ? 'bookings' : 'venue-suggestions';
-      await axios.put(
-        `${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/${endpoint}/${newStatus}/${id}`
-      );
+      const action = newStatus === 'approved' ? 'approved' : 'reject';
+      const url = `${baseUrl}/api/${endpoint}/${action}/${id}`;
+      
+      console.log('Making request to:', url); // Debug log
+      await axios.put(url, { status: newStatus });
       fetchData(); // Refresh data
     } catch (err) {
-      setError(`Failed to update ${type} status. Please try again.`);
       console.error(`Error updating ${type} status:`, err);
+      setError(`Failed to update ${type} status. Please try again.`);
     }
   };
 
   // Handle edit click
   const handleEdit = (item, type) => {
+    console.log('Original item:', item); // For debugging
     setCurrentItem(item);
     setActionType(type);
+    setShowEditModal(true);
     
-    // Format the date for the date input (YYYY-MM-DD)
+    // Format the date and time properly
     let formattedDate = '';
-    if (type === 'booking' && item.date) {
-      const dateObj = new Date(item.date);
-      formattedDate = dateObj.toISOString().split('T')[0];
+    let formattedTime = '';
+    
+    if (item.date) {
+      try {
+        const dateObj = new Date(item.date);
+        formattedDate = dateObj.toISOString().split('T')[0];
+      } catch (err) {
+        console.error('Error formatting date:', err);
+        formattedDate = item.date;
+      }
+    }
+    
+    if (item.time) {
+      try {
+        // Handle different time formats
+        const timeStr = item.time.toString().toLowerCase().trim();
+        
+        // Check if time is in 12-hour format (e.g., "2:30 PM")
+        if (timeStr.includes('am') || timeStr.includes('pm')) {
+          const [time, period] = timeStr.split(' ');
+          const [hours, minutes] = time.split(':');
+          let hour = parseInt(hours);
+          
+          // Convert to 24-hour format
+          if (period === 'pm' && hour !== 12) {
+            hour += 12;
+          } else if (period === 'am' && hour === 12) {
+            hour = 0;
+          }
+          
+          formattedTime = `${hour.toString().padStart(2, '0')}:${minutes}`;
+        } else {
+          // If already in 24-hour format or other format, try to parse it
+          const [hours, minutes] = timeStr.split(':');
+          formattedTime = `${hours.padStart(2, '0')}:${minutes.padStart(2, '0')}`;
+        }
+      } catch (err) {
+        console.error('Error formatting time:', err);
+        formattedTime = item.time; // Use original time if parsing fails
+      }
     }
 
+    // Set form data based on item type
     setFormData({
-      name: type === 'booking' ? item.customerName : item.clientName,
-      email: type === 'booking' ? item.customerEmail : item.email,
-      phone: item.phoneNumber,
-      eventType: item.eventType,
+      name: type === 'booking' ? item.customerName : item.clientName || '',
+      email: type === 'booking' ? item.customerEmail : item.email || '',
+      phone: item.phoneNumber || '',
+      eventType: item.eventType || '',
       date: formattedDate,
-      time: type === 'booking' ? item.time : '',
+      time: formattedTime,
       requirements: item.specificRequirements || '',
       status: item.status || 'pending',
       venueName: item.venueName || '',
-      venueId: item.venueId || ''
+      venueId: item.venueId || '',
+      capacity: type === 'suggestion' ? (item.capacity || '') : '',
+      location: type === 'suggestion' ? (item.location || '') : (item.venueLocation || '')
     });
-    setShowEditModal(true);
+    
+    console.log('Setting form data:', {
+      name: type === 'booking' ? item.customerName : item.clientName || '',
+      email: type === 'booking' ? item.customerEmail : item.email || '',
+      phone: item.phoneNumber || '',
+      eventType: item.eventType || '',
+      date: formattedDate,
+      time: formattedTime,
+      requirements: item.specificRequirements || '',
+      status: item.status || 'pending',
+      venueName: item.venueName || '',
+      venueId: item.venueId || '',
+      capacity: type === 'suggestion' ? (item.capacity || '') : '',
+      location: type === 'suggestion' ? (item.location || '') : (item.venueLocation || '')
+    });
+  };
+
+  // Generate Booking Report
+  const generateBookingReport = () => {
+    try {
+      // Initialize jsPDF
+      const doc = new jsPDF();
+      
+      // Add company logo/name
+      doc.setFontSize(20);
+      doc.setTextColor(44, 62, 80);
+      doc.text('EventEase', 14, 20);
+      
+      // Add company address and contact
+      doc.setFontSize(10);
+      doc.setTextColor(52, 73, 94);
+      doc.text('No.12, New Kandy Rd, Malabe', 14, 30);
+      doc.text('+94 11 2233445', 14, 35);
+
+      // Add horizontal line
+      doc.setDrawColor(52, 73, 94);
+      doc.setLineWidth(0.5);
+      doc.line(14, 40, 196, 40);
+      
+      // Add title with better styling
+      doc.setFontSize(16);
+      doc.setTextColor(41, 128, 185);
+      doc.text('Venue Booking Requests Report', 14, 55);
+      
+      // Add date with better styling
+      doc.setFontSize(10);
+      doc.setTextColor(52, 73, 94);
+      doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 14, 62);
+
+      // Calculate statistics
+      const totalBookings = bookings.length;
+      const approvedBookings = bookings.filter(b => b.status?.toLowerCase() === 'approved').length;
+      const rejectedBookings = bookings.filter(b => b.status?.toLowerCase() === 'rejected').length;
+      const pendingBookings = bookings.filter(b => b.status?.toLowerCase() === 'pending').length;
+
+      // Add statistics with better styling
+      doc.setFontSize(12);
+      doc.setTextColor(52, 73, 94);
+      doc.text('Booking Statistics:', 14, 75);
+      
+      // Create statistics table
+      doc.autoTable({
+        startY: 80,
+        head: [['Total Bookings', 'Approved', 'Rejected', 'Pending']],
+        body: [[totalBookings, approvedBookings, rejectedBookings, pendingBookings]],
+        theme: 'grid',
+        headStyles: {
+          fillColor: [41, 128, 185],
+          textColor: [255, 255, 255],
+          fontSize: 10
+        },
+        bodyStyles: {
+          fontSize: 10
+        },
+        margin: { left: 14 }
+      });
+
+      // Add approved bookings table
+      doc.setFontSize(14);
+      doc.setTextColor(46, 204, 113);
+      doc.text('Approved Bookings', 14, 110);
+      
+      const approvedData = bookings
+        .filter(b => b.status?.toLowerCase() === 'approved')
+        .map(b => [
+          b.customerName || 'N/A',
+          b.venueName || 'N/A',
+          b.eventType || 'N/A',
+          new Date(b.date).toLocaleDateString(),
+          b.time || 'N/A'
+        ]);
+
+      // Use autoTable with better styling
+      doc.autoTable({
+        startY: 115,
+        head: [['Customer Name', 'Venue', 'Event Type', 'Date', 'Time']],
+        body: approvedData,
+        theme: 'grid',
+        headStyles: {
+          fillColor: [46, 204, 113],
+          textColor: [255, 255, 255],
+          fontSize: 10
+        },
+        bodyStyles: {
+          fontSize: 9
+        },
+        alternateRowStyles: {
+          fillColor: [240, 244, 245]
+        },
+        margin: { left: 14 }
+      });
+
+      // Save the PDF
+      doc.save(`booking_report_${new Date().toISOString().split('T')[0]}.pdf`);
+    } catch (error) {
+      console.error('Error generating booking report:', error);
+      setError('Failed to generate booking report');
+    }
+  };
+
+  // Generate Venue Suggestions Report
+  const generateSuggestionsReport = () => {
+    try {
+      const doc = new jsPDF();
+      
+      // Add company logo/name
+      doc.setFontSize(20);
+      doc.setTextColor(44, 62, 80);
+      doc.text('EventEase', 14, 20);
+      
+      // Add company address and contact
+      doc.setFontSize(10);
+      doc.setTextColor(52, 73, 94);
+      doc.text('No.12, New Kandy Rd, Malabe', 14, 30);
+      doc.text('+94 11 2233445', 14, 35);
+
+      // Add horizontal line
+      doc.setDrawColor(52, 73, 94);
+      doc.setLineWidth(0.5);
+      doc.line(14, 40, 196, 40);
+      
+      // Add title with better styling
+      doc.setFontSize(16);
+      doc.setTextColor(41, 128, 185);
+      doc.text('Venue Suggestions Report', 14, 55);
+      
+      // Add date with better styling
+      doc.setFontSize(10);
+      doc.setTextColor(52, 73, 94);
+      doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 14, 62);
+
+      // Calculate statistics
+      const totalSuggestions = suggestions.length;
+      const approvedSuggestions = suggestions.filter(s => s.status?.toLowerCase() === 'approved').length;
+      const rejectedSuggestions = suggestions.filter(s => s.status?.toLowerCase() === 'rejected').length;
+      const pendingSuggestions = suggestions.filter(s => s.status?.toLowerCase() === 'pending').length;
+
+      // Add statistics with better styling
+      doc.setFontSize(12);
+      doc.setTextColor(52, 73, 94);
+      doc.text('Suggestion Statistics:', 14, 75);
+      
+      // Create statistics table
+      doc.autoTable({
+        startY: 80,
+        head: [['Total Suggestions', 'Approved', 'Rejected', 'Pending']],
+        body: [[totalSuggestions, approvedSuggestions, rejectedSuggestions, pendingSuggestions]],
+        theme: 'grid',
+        headStyles: {
+          fillColor: [41, 128, 185],
+          textColor: [255, 255, 255],
+          fontSize: 10
+        },
+        bodyStyles: {
+          fontSize: 10
+        },
+        margin: { left: 14 }
+      });
+
+      // Add approved suggestions table
+      doc.setFontSize(14);
+      doc.setTextColor(46, 204, 113);
+      doc.text('Approved Suggestions', 14, 110);
+      
+      const approvedData = suggestions
+        .filter(s => s.status?.toLowerCase() === 'approved')
+        .map(s => [
+          s.clientName || 'N/A',
+          s.venueName || 'N/A',
+          s.location || 'N/A',
+          s.capacity?.toString() || 'N/A',
+          s.eventType || 'N/A',
+          new Date(s.date).toLocaleDateString() || 'N/A',
+          s.time || 'N/A'
+        ]);
+
+      // Use autoTable with better styling
+      doc.autoTable({
+        startY: 115,
+        head: [['Client Name', 'Venue Name', 'Location', 'Capacity', 'Event Type', 'Date', 'Time']],
+        body: approvedData,
+        theme: 'grid',
+        headStyles: {
+          fillColor: [46, 204, 113],
+          textColor: [255, 255, 255],
+          fontSize: 10
+        },
+        bodyStyles: {
+          fontSize: 9
+        },
+        alternateRowStyles: {
+          fillColor: [240, 244, 245]
+        },
+        margin: { left: 14 }
+      });
+
+      // Save the PDF
+      doc.save(`venue_suggestions_report_${new Date().toISOString().split('T')[0]}.pdf`);
+    } catch (error) {
+      console.error('Error generating suggestions report:', error);
+      setError('Failed to generate suggestions report');
+    }
   };
 
   // Handle delete click
@@ -160,7 +463,8 @@ const AdminVenue = () => {
     setFormData(prev => ({
       ...prev,
       venueId: selectedVenueId,
-      venueName: selectedVenue ? selectedVenue.name : ''
+      venueName: selectedVenue ? selectedVenue.name : '',
+      location: selectedVenue ? selectedVenue.location : ''
     }));
   };
 
@@ -168,35 +472,174 @@ const AdminVenue = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const endpoint = actionType === 'booking' ? 'bookings' : 'venue-suggestions';
-      const payload = {
-        ...formData,
-        [actionType === 'booking' ? 'customerName' : 'clientName']: formData.name,
-        [actionType === 'booking' ? 'customerEmail' : 'email']: formData.email,
-        phoneNumber: formData.phone,
-        eventType: formData.eventType,
-        specificRequirements: formData.requirements,
-        status: formData.status,
-        venueName: formData.venueName,
-        venueId: formData.venueId
-      };
-
-      if (actionType === 'booking') {
-        payload.date = formData.date;
-        payload.time = formData.time;
+      // Validate email format
+      const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      if (!emailRegex.test(formData.email)) {
+        setError('Please enter a valid email address');
+        return;
       }
 
-      await axios.put(
+      // Validate phone number (10 digits)
+      const phoneRegex = /^\d{10}$/;
+      if (!phoneRegex.test(formData.phone)) {
+        setError('Phone number must be exactly 10 digits');
+        return;
+      }
+
+      // Validate date (prevent past dates)
+      const selectedDate = new Date(formData.date);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      
+      if (selectedDate < today) {
+        setError('Cannot select a past date');
+        return;
+      }
+
+      const endpoint = actionType === 'booking' ? 'bookings' : 'venue-suggestions';
+
+      // Format time to ensure it's in the correct format (HH:mm)
+      let formattedTime = formData.time;
+      if (formData.time) {
+        try {
+          const [hours, minutes] = formData.time.split(':');
+          formattedTime = `${hours.padStart(2, '0')}:${minutes.padStart(2, '0')}`;
+        } catch (err) {
+          console.error('Error formatting time:', err);
+        }
+      }
+
+      let payload;
+      if (actionType === 'booking') {
+        payload = {
+          customerName: formData.name,
+          customerEmail: formData.email,
+          phoneNumber: formData.phone,
+          eventType: formData.eventType,
+          specificRequirements: formData.requirements,
+          status: formData.status,
+          venueName: formData.venueName,
+          venueId: formData.venueId,
+          date: formData.date,
+          time: formattedTime
+        };
+      } else {
+        // For venue suggestions
+        payload = {
+          clientName: formData.name,
+          email: formData.email,
+          phoneNumber: formData.phone,
+          venueName: formData.venueName,
+          location: formData.location,
+          capacity: formData.capacity ? parseInt(formData.capacity) : 0,
+          eventType: formData.eventType,
+          specificRequirements: formData.requirements,
+          status: formData.status.toLowerCase(),
+          date: formData.date,
+          time: formattedTime
+        };
+      }
+
+      // Remove empty strings, null values, and undefined values
+      Object.keys(payload).forEach(key => {
+        if (payload[key] === '' || payload[key] === null || payload[key] === undefined) {
+          delete payload[key];
+        }
+      });
+
+      // Ensure required fields are present for venue suggestions
+      if (actionType === 'suggestion') {
+        const requiredFields = ['clientName', 'email', 'venueName', 'location', 'capacity', 'eventType', 'date', 'time'];
+        const missingFields = requiredFields.filter(field => !payload[field]);
+        if (missingFields.length > 0) {
+          throw new Error(`Missing required fields: ${missingFields.join(', ')}`);
+        }
+      }
+
+      console.log('Submitting payload:', payload); // For debugging
+
+      const response = await axios.put(
         `${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/${endpoint}/${currentItem._id}`,
         payload
       );
-      
-      fetchData(); // Refresh data
-      setShowEditModal(false);
+
+      if (response.data) {
+        console.log('Update successful:', response.data);
+        fetchData(); // Refresh data
+        setShowEditModal(false);
+      }
     } catch (err) {
-      setError(`Failed to update ${actionType}. Please try again.`);
       console.error(`Error updating ${actionType}:`, err);
+      setError(err.message || `Failed to update ${actionType}. Please try again.`);
     }
+  };
+
+  // Search function
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const handleSearchFieldChange = (e) => {
+    setSearchField(e.target.value);
+  };
+
+  // Filter data based on search
+  const filterData = (data) => {
+    if (!searchTerm) return data;
+    
+    return data.filter(item => {
+      const searchValue = searchTerm.toLowerCase();
+      const itemValue = (() => {
+        switch (searchField) {
+          case 'name':
+            return (item.customerName || item.clientName || '').toLowerCase();
+          case 'venue':
+            return (item.venueName || '').toLowerCase();
+          case 'eventType':
+            return (item.eventType || '').toLowerCase();
+          case 'status':
+            return (item.status || '').toLowerCase();
+          case 'date':
+            return new Date(item.date).toLocaleDateString().toLowerCase();
+          default:
+            return '';
+        }
+      })();
+      
+      return itemValue.includes(searchValue);
+    });
+  };
+
+  // Render search bar
+  const renderSearchBar = () => {
+    return (
+      <div className="search-container">
+        <div className="search-wrapper">
+          <div className="search-input">
+            <FaSearch className="search-icon" />
+            <input
+              type="text"
+              placeholder="Search..."
+              value={searchTerm}
+              onChange={handleSearch}
+            />
+          </div>
+          <div className="search-select">
+            <select
+              className="search-field-select"
+              value={searchField}
+              onChange={handleSearchFieldChange}
+            >
+              <option value="name">Name</option>
+              <option value="venue">Venue</option>
+              <option value="eventType">Event Type</option>
+              <option value="status">Status</option>
+              <option value="date">Date</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    );
   };
 
   // Loading state
@@ -227,8 +670,10 @@ const AdminVenue = () => {
   };
 
   const renderActionButtons = (item, type) => {
+    if (!item._id) return null;
+    
     return (
-      <div className="action-buttons">
+      <div className="action-buttons" key={`actions-${item._id}`}>
         <button className="edit-button" onClick={() => handleEdit(item, type)}>
           Edit
         </button>
@@ -293,73 +738,115 @@ const AdminVenue = () => {
         <form className="edit-form" onSubmit={handleSubmit}>
           <h3>Edit {actionType === 'booking' ? 'Booking' : 'Venue Suggestion'}</h3>
           
-          {renderFormGroup('name', 'text', 'Name', formData.name)}
-          {renderFormGroup('email', 'email', 'Email', formData.email)}
-          {renderFormGroup('phone', 'tel', 'Phone Number', formData.phone)}
+          <div className="form-section">
+            <h4>Contact Information</h4>
+            {renderFormGroup('name', 'text', 'Name', formData.name)}
+            {renderFormGroup('email', 'email', 'Email', formData.email)}
+            {renderFormGroup('phone', 'tel', 'Phone Number', formData.phone)}
+          </div>
           
-          {actionType === 'booking' && (
+          <div className="form-section">
+            <h4>Venue Details</h4>
+            {actionType === 'booking' ? (
+              <div className="form-group">
+                <label htmlFor="venueId">Venue</label>
+                <select
+                  id="venueId"
+                  name="venueId"
+                  value={formData.venueId}
+                  onChange={handleVenueChange}
+                  className="form-control"
+                >
+                  <option value="">Select Venue</option>
+                  {venues.map(venue => (
+                    <option key={venue._id} value={venue._id}>
+                      {venue.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            ) : (
+              <>
+                {renderFormGroup('venueName', 'text', 'Venue Name', formData.venueName)}
+                {renderFormGroup('location', 'text', 'Location', formData.location)}
+                {renderFormGroup('capacity', 'number', 'Capacity', formData.capacity)}
+              </>
+            )}
+          </div>
+          
+          <div className="form-section">
+            <h4>Event Details</h4>
             <div className="form-group">
-              <label htmlFor="venueId">Venue</label>
+              <label htmlFor="eventType">Event Type</label>
               <select
-                id="venueId"
-                name="venueId"
-                value={formData.venueId}
-                onChange={handleVenueChange}
+                id="eventType"
+                name="eventType"
+                value={formData.eventType}
+                onChange={handleInputChange}
                 className="form-control"
               >
-                <option value="">Select Venue</option>
-                {venues.map(venue => (
-                  <option key={venue._id} value={venue._id}>
-                    {venue.name}
-                  </option>
+                <option value="">Select Event Type</option>
+                {['Wedding', 'Birthday Party', 'Conference', 'Concert', 'Exhibition', 'Other'].map(type => (
+                  <option key={type} value={type}>{type}</option>
                 ))}
               </select>
             </div>
-          )}
-          
-          <div className="form-group">
-            <label htmlFor="eventType">Event Type</label>
-            <select
-              id="eventType"
-              name="eventType"
-              value={formData.eventType}
-              onChange={handleInputChange}
-              className="form-control"
-            >
-              <option value="">Select Event Type</option>
-              {['Wedding', 'Birthday Party', 'Conference', 'Concert', 'Exhibition', 'Other'].map(type => (
-                <option key={type} value={type}>{type}</option>
-              ))}
-            </select>
+            
+            <div className="form-row">
+              <div className="form-group">
+                <label htmlFor="date">Event Date</label>
+                <input
+                  type="date"
+                  id="date"
+                  name="date"
+                  value={formData.date || ''}
+                  onChange={handleInputChange}
+                  className="form-control"
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="time">Event Time</label>
+                <input
+                  type="time"
+                  id="time"
+                  name="time"
+                  value={formData.time || ''}
+                  onChange={handleInputChange}
+                  className="form-control"
+                  step="60"
+                />
+              </div>
+            </div>
+            
+            <div className="form-group">
+              <label htmlFor="requirements">Specific Requirements</label>
+              <textarea
+                id="requirements"
+                name="requirements"
+                value={formData.requirements || ''}
+                onChange={handleInputChange}
+                rows={4}
+                className="form-control"
+              />
+            </div>
           </div>
           
-          {actionType === 'booking' && renderFormGroup('date', 'date', 'Event Date', formData.date)}
-          {actionType === 'booking' && renderFormGroup('time', 'time', 'Event Time', formData.time)}
-          
-          <div className="form-group">
-            <label htmlFor="requirements">Specific Requirements</label>
-            <textarea
-              id="requirements"
-              name="requirements"
-              value={formData.requirements}
-              onChange={handleInputChange}
-              rows={4}
-            />
-          </div>
-          
-          <div className="form-group">
-            <label htmlFor="status">Status</label>
-            <select
-              id="status"
-              name="status"
-              value={formData.status}
-              onChange={handleInputChange}
-              className="form-control"
-            >
-              <option value="pending">Pending</option>
-              <option value="approved">Approved</option>
-              <option value="rejected">Rejected</option>
-            </select>
+          <div className="form-section">
+            <h4>Status</h4>
+            <div className="form-group">
+              <label htmlFor="status">Status</label>
+              <select
+                id="status"
+                name="status"
+                value={formData.status}
+                onChange={handleInputChange}
+                className="form-control"
+              >
+                <option value="pending">Pending</option>
+                <option value="approved">Approved</option>
+                <option value="rejected">Rejected</option>
+              </select>
+            </div>
           </div>
           
           <div className="form-actions">
@@ -376,60 +863,88 @@ const AdminVenue = () => {
   };
 
   const renderBookingsTable = () => {
+    const filteredBookings = filterData(bookings);
     return (
       <div className="bookings-section">
         <div className="section-header">
           <h2>All Booking Requests</h2>
-          <div className="total-count">{bookings.length} bookings</div>
+          <div className="total-count">{filteredBookings.length} bookings</div>
         </div>
         
-        {bookings.length === 0 ? (
+        {renderSearchBar()}
+        
+        {filteredBookings.length === 0 ? (
           renderEmptyState('No booking requests found.')
         ) : (
           <div className="table-container">
             <table className="data-table">
               <thead>
                 <tr>
-                  <th>Customer</th>
-                  <th>Venue</th>
-                  <th>Location</th>
+                  <th>Customer Details</th>
+                  <th>Venue Information</th>
                   <th>Event Details</th>
-                  <th>Date & Time</th>
                   <th>Status</th>
                   <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {bookings.map(booking => (
-                  <tr key={booking._id}>
+                {filteredBookings.map(booking => (
+                  <tr key={booking._id || `booking-${booking.customerName}-${booking.date}`}>
                     <td>
-                      <div className="client-info">
-                        <div className="client-name">{booking.customerName}</div>
-                        <div className="contact-info">
-                          <div>{booking.customerEmail}</div>
-                          <div>{booking.phoneNumber}</div>
+                      <div className="details-cell">
+                        <div className="detail-row">
+                          <span className="detail-label">Name:</span>
+                          <span className="detail-value">{booking.customerName}</span>
+                        </div>
+                        <div className="detail-row">
+                          <span className="detail-label">Email:</span>
+                          <span className="detail-value">{booking.customerEmail}</span>
+                        </div>
+                        <div className="detail-row">
+                          <span className="detail-label">Phone:</span>
+                          <span className="detail-value">{booking.phoneNumber}</span>
                         </div>
                       </div>
                     </td>
-                    <td>{booking.venueName}</td>
-                    <td>{booking.venueLocation}</td>
                     <td>
-                      <div className="event-details">
-                        <div>{booking.eventType}</div>
+                      <div className="details-cell">
+                        <div className="detail-row">
+                          <span className="detail-label">Venue:</span>
+                          <span className="detail-value">{booking.venueName}</span>
+                        </div>
+                        <div className="detail-row">
+                          <span className="detail-label">Location:</span>
+                          <span className="detail-value">{booking.venueLocation}</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <div className="details-cell">
+                        <div className="detail-row">
+                          <span className="detail-label">Event Type:</span>
+                          <span className="detail-value">{booking.eventType}</span>
+                        </div>
+                        <div className="detail-row">
+                          <span className="detail-label">Date:</span>
+                          <span className="detail-value">{new Date(booking.date).toLocaleDateString()}</span>
+                        </div>
+                        <div className="detail-row">
+                          <span className="detail-label">Time:</span>
+                          <span className="detail-value">{booking.time}</span>
+                        </div>
                         {booking.specificRequirements && (
-                          <div className="requirements">
-                            Requirements: {booking.specificRequirements}
+                          <div className="detail-row">
+                            <span className="detail-label">Requirements:</span>
+                            <span className="detail-value">{booking.specificRequirements}</span>
                           </div>
                         )}
                       </div>
                     </td>
                     <td>
-                      <div className="event-details">
-                        <div>{new Date(booking.date).toLocaleDateString()}</div>
-                        <div>{booking.time}</div>
+                      <div className="status-cell">
+                        {renderStatusBadge(booking.status)}
                       </div>
                     </td>
-                    <td>{renderStatusBadge(booking.status)}</td>
                     <td>{renderActionButtons(booking, 'booking')}</td>
                   </tr>
                 ))}
@@ -442,53 +957,92 @@ const AdminVenue = () => {
   };
 
   const renderSuggestionsTable = () => {
+    const filteredSuggestions = filterData(suggestions);
     return (
       <div className="suggestions-section">
         <div className="section-header">
           <h2>All Venue Suggestions</h2>
-          <div className="total-count">{suggestions.length} suggestions</div>
+          <div className="total-count">{filteredSuggestions.length} suggestions</div>
         </div>
         
-        {suggestions.length === 0 ? (
+        {renderSearchBar()}
+        
+        {filteredSuggestions.length === 0 ? (
           renderEmptyState('No venue suggestions found.')
         ) : (
           <div className="table-container">
             <table className="data-table">
               <thead>
                 <tr>
-                  <th>Suggested By</th>
-                  <th>Venue Details</th>
-                  <th>Event Type</th>
+                  <th>Client Details</th>
+                  <th>Venue Information</th>
+                  <th>Event Details</th>
                   <th>Status</th>
                   <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {suggestions.map(suggestion => (
-                  <tr key={suggestion._id}>
+                {filteredSuggestions.map(suggestion => (
+                  <tr key={suggestion._id || `suggestion-${suggestion.clientName}-${suggestion.date}`}>
                     <td>
-                      <div className="client-info">
-                        <div className="client-name">{suggestion.clientName}</div>
-                        <div className="contact-info">
-                          <div>{suggestion.email}</div>
-                          <div>{suggestion.phoneNumber}</div>
+                      <div className="details-cell">
+                        <div className="detail-row">
+                          <span className="detail-label">Name:</span>
+                          <span className="detail-value">{suggestion.clientName}</span>
+                        </div>
+                        <div className="detail-row">
+                          <span className="detail-label">Email:</span>
+                          <span className="detail-value">{suggestion.email}</span>
+                        </div>
+                        <div className="detail-row">
+                          <span className="detail-label">Phone:</span>
+                          <span className="detail-value">{suggestion.phoneNumber}</span>
                         </div>
                       </div>
                     </td>
                     <td>
-                      <div className="venue-details">
-                        <div className="venue-name">{suggestion.venueName}</div>
-                        <div className="venue-location">{suggestion.location}</div>
-                        {suggestion.capacity && (
-                          <div>Capacity: {suggestion.capacity}</div>
-                        )}
-                        {suggestion.description && (
-                          <div className="venue-description">{suggestion.description}</div>
+                      <div className="details-cell">
+                        <div className="detail-row">
+                          <span className="detail-label">Venue:</span>
+                          <span className="detail-value">{suggestion.venueName}</span>
+                        </div>
+                        <div className="detail-row">
+                          <span className="detail-label">Location:</span>
+                          <span className="detail-value">{suggestion.location}</span>
+                        </div>
+                        <div className="detail-row">
+                          <span className="detail-label">Capacity:</span>
+                          <span className="detail-value">{suggestion.capacity} people</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <div className="details-cell">
+                        <div className="detail-row">
+                          <span className="detail-label">Event Type:</span>
+                          <span className="detail-value">{suggestion.eventType}</span>
+                        </div>
+                        <div className="detail-row">
+                          <span className="detail-label">Date:</span>
+                          <span className="detail-value">{new Date(suggestion.date).toLocaleDateString()}</span>
+                        </div>
+                        <div className="detail-row">
+                          <span className="detail-label">Time:</span>
+                          <span className="detail-value">{suggestion.time}</span>
+                        </div>
+                        {suggestion.specificRequirements && (
+                          <div className="detail-row">
+                            <span className="detail-label">Requirements:</span>
+                            <span className="detail-value">{suggestion.specificRequirements}</span>
+                          </div>
                         )}
                       </div>
                     </td>
-                    <td>{suggestion.eventType}</td>
-                    <td>{renderStatusBadge(suggestion.status)}</td>
+                    <td>
+                      <div className="status-cell">
+                        {renderStatusBadge(suggestion.status.toLowerCase())}
+                      </div>
+                    </td>
                     <td>{renderActionButtons(suggestion, 'suggestion')}</td>
                   </tr>
                 ))}
@@ -501,24 +1055,56 @@ const AdminVenue = () => {
   };
 
   return (
-    <div className="admin-dashboard">
-      <h1 className="dashboard-title">Venue Management Dashboard</h1>
+    <div className="admin-venue-container">
+      <h2>Venue Management</h2>
       
-      <div className="dashboard-tabs">
+      <div className="tab-buttons">
         <button
-          className={`tab-button ${activeTab === 'bookings' ? 'active' : ''}`}
+          className={activeTab === 'bookings' ? 'active' : ''}
           onClick={() => handleTabChange('bookings')}
         >
           Booking Requests
         </button>
         <button
-          className={`tab-button ${activeTab === 'suggestions' ? 'active' : ''}`}
+          className={activeTab === 'suggestions' ? 'active' : ''}
           onClick={() => handleTabChange('suggestions')}
         >
           Venue Suggestions
         </button>
       </div>
-      
+
+      <div className="actions-bar">
+        <div className="search-section">
+          <FaSearch className="search-icon" />
+          <input
+            type="text"
+            placeholder={`Search ${activeTab}...`}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+          <select
+            value={searchField}
+            onChange={(e) => setSearchField(e.target.value)}
+          >
+            <option value="name">Name</option>
+            <option value="venue">Venue</option>
+            <option value="status">Status</option>
+          </select>
+        </div>
+        
+        <button
+          className="generate-report-btn"
+          onClick={() => activeTab === 'bookings' ? generateBookingReport() : generateSuggestionsReport()}
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+          Export Report
+        </button>
+      </div>
+
       {activeTab === 'bookings' ? renderBookingsTable() : renderSuggestionsTable()}
       
       {showDeleteModal && renderDeleteModal()}

@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { FaWhatsapp, FaMapMarkerAlt } from "react-icons/fa";
-import "./MainVenuePage.css";
+
 
 const MainVenuePage = () => {
   const navigate = useNavigate();
@@ -45,7 +45,7 @@ const MainVenuePage = () => {
   };
 
   const openWhatsApp = () => {
-    const phoneNumber = "+94770710385";
+    const phoneNumber = "+94763793360";
     const message = "Hello, I need help with my venue booking";
     window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`, "_blank");
   };
