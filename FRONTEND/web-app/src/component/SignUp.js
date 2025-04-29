@@ -79,7 +79,7 @@ const Signup = () => {
           Already have an account? <span onClick={() => navigate('/login')}>Login</span>
         </p>
       </div>
-    </div>
+      </div>
   );
 };
 
