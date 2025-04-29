@@ -1,0 +1,104 @@
+#component-div {
+    display: inline-flex  !important;
+    vertical-align: top;
+    width: 100%!important;
+  }
+  #sidebar-section{
+    display: inline-flex  !important;
+    position: sticky;
+    width: 25% !important;
+  }
+  
+  #body-div{
+    display: flex !important;
+  }
+  
+  #task-dashbord{
+    margin: 0px;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    box-sizing: border-box;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+  
+  
+  #TaskDashBoard{
+    display: flex;
+    align-items: center;
+    width: 100%;
+    justify-content: space-between;
+    padding: 0px 100px 0px 0px;
+  }
+  
+  #TaskLeftDiv{
+    display: inline-flex;
+    width: 65%;
+    justify-content: center;
+    padding: 20px;
+  }
+  
+  #TaskRightDiv{
+    display: inline-flex !important;
+    justify-content: center;
+    background-image: linear-gradient(to right, rgba(51, 51, 52, 0.8) , rgba(11, 11, 11, 0.8));
+    width:35%;
+    justify-content: space-between;
+    padding: 20px 40px;
+    border-radius: 5px;
+  }
+  
+  ul {
+    list-style-type: none; 
+    padding: 0;
+    display: grid;
+    gap: 10px; 
+  }
+  
+  ul a{
+    color: white;
+    text-decoration: none;
+  }
+  
+  .TaskLeftDashboardTitle{
+    font-size: 24px;
+    text-align: center;
+    color: black;
+  }
+  
+  #TaskButton{
+    display: inline;
+    margin: 0px 10px;
+    background-image: linear-gradient(to right, rgba(51, 51, 52, 0.8) , rgba(11, 11, 11, 0.8));
+    padding: 10px;
+    color: white;
+    border-radius: 5px;
+    width: 200px !important;
+  }
+   
+  #TaskButton {
+    display: inline;
+    background-image: linear-gradient(to right, rgba(51, 51, 52, 0.8) , rgba(11, 11, 11, 0.8));
+    color: white;
+    border-radius: 5px;
+    width: 200px !important;
+    padding: 10px;
+  }
+  
+  #image-div{
+    height: 300px;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    margin: 20px 0px;
+    border-radius: 10px;
+  }
+  
+  #TaskButton-a{
+    text-decoration: none;
+  }
+  
+  #TaskButton-a{
+    text-decoration: none;
+  }

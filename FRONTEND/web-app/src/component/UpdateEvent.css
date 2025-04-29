@@ -1,0 +1,148 @@
+.event-update-container {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.event-update-title {
+  text-align: center;
+  color: #2c3e50;
+  margin-bottom: 2.5rem;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.event-update-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.event-update-input {
+  padding: 1rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.event-update-input:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+}
+
+.event-update-input::placeholder {
+  color: #95a5a6;
+}
+
+.event-update-textarea {
+  padding: 1rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 1rem;
+  min-height: 100px;
+  resize: vertical;
+  transition: all 0.3s ease;
+}
+
+.event-update-textarea:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+}
+
+.event-update-button {
+  padding: 0.8rem 2rem;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 1rem;
+  width: fit-content;
+  align-self: center;
+}
+
+.event-update-button:hover {
+  background-color: #2980b9;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.event-update-button:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .event-update-container {
+    margin: 1rem;
+    padding: 1.5rem;
+  }
+
+  .event-update-title {
+    font-size: 1.6rem;
+    margin-bottom: 2rem;
+  }
+
+  .event-update-input,
+  .event-update-textarea {
+    padding: 0.8rem;
+  }
+}
+
+/* Error state styles */
+.event-update-input.error,
+.event-update-textarea.error {
+  border-color: #e74c3c;
+}
+
+.event-update-error-message {
+  color: #e74c3c;
+  font-size: 0.9rem;
+  margin-top: 0.2rem;
+}
+
+/* Date input specific styles */
+.event-update-input[type="date"] {
+  color: #333;
+}
+
+.event-update-input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  padding: 0.2rem;
+  border-radius: 4px;
+  background-color: #f8f9fa;
+}
+
+/* Number input specific styles */
+.event-update-input[type="number"]::-webkit-inner-spin-button,
+.event-update-input[type="number"]::-webkit-outer-spin-button {
+  opacity: 1;
+  height: 2rem;
+}
+
+/* Success message */
+.event-update-success {
+  text-align: center;
+  padding: 1rem;
+  background-color: #d4edda;
+  color: #155724;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+/* Loading state */
+.event-update-loading {
+  text-align: center;
+  padding: 2rem;
+  color: #7f8c8d;
+}

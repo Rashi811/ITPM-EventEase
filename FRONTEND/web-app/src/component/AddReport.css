@@ -1,0 +1,104 @@
+.report-add-container {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .report-add-title {
+    text-align: center;
+    color: #333;
+    margin-bottom: 2rem;
+    font-size: 1.8rem;
+    font-weight: 600;
+  }
+  
+  .report-add-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+  }
+  
+  .report-add-select {
+    padding: 0.8rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+    background-color: #fff;
+    color: #333;
+    cursor: pointer;
+  }
+  
+  .report-add-select:focus {
+    outline: none;
+    border-color: #4CAF50;
+    box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+  }
+  
+  .report-add-input {
+    padding: 0.8rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+  }
+  
+  .report-add-input:focus {
+    outline: none;
+    border-color: #4CAF50;
+    box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+  }
+  
+  .report-add-input::placeholder {
+    color: #999;
+  }
+  
+  .report-add-button {
+    padding: 1rem;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .report-add-button:hover {
+    background-color: #45a049;
+  }
+  
+  .report-add-button:active {
+    background-color: #3d8b40;
+  }
+  
+  /* Responsive styles */
+  @media (max-width: 768px) {
+    .report-add-container {
+      margin: 1rem;
+      padding: 1.5rem;
+    }
+  
+    .report-add-title {
+      font-size: 1.5rem;
+    }
+  
+    .report-add-input,
+    .report-add-select {
+      padding: 0.7rem;
+    }
+  }
+  
+  /* Error state styles */
+  .report-add-input.error {
+    border-color: #ff4444;
+  }
+  
+  .report-add-error-message {
+    color: #ff4444;
+    font-size: 0.9rem;
+    margin-top: 0.2rem;
+  }

@@ -1,0 +1,134 @@
+
+/* Reset and enforce white background */
+body, html {
+  background: white !important; /* Ensure no parent sets a background */
+  margin: 0;
+  padding: 0;
+}
+
+/* Main container with enforced background */
+.main-venue-container {
+  all: unset; /* Prevent inherited styles */
+  font-family: 'Arial', sans-serif;
+  display: block;
+  box-sizing: border-box;
+  background: white !important; /* Force white background */
+  min-height: 100vh;
+  padding: 20px;
+  text-align: center;
+}
+
+/* Navbar Styles */
+.venue-navbar {
+  background: #2c3e50;
+  padding: 15px 0;
+  margin-bottom: 40px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.venue-navbar ul {
+  list-style-type: none;
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  padding: 0;
+  margin: 0;
+}
+
+.venue-navbar a {
+  color: white;
+  text-decoration: none;
+  font-size: 1.1rem;
+  padding: 5px 10px;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.venue-navbar a:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Content Styles */
+.venue-title {
+  font-size: 2.5rem;
+  margin-bottom: 30px;
+  color: #2c3e50;
+}
+
+.venue-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 30px;
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.venue-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  padding: 25px;
+  transition: all 0.3s ease;
+  font-size: 1.1rem; 
+  line-height: 1.6;
+}
+
+.venue-card:hover {
+  transform: translateY(-5px);
+}
+
+.venue-card h2 {
+  font-size: 1.8rem;
+  color: #2c3e50;
+  margin-bottom: 15px;
+}
+
+/* Book Now Button - Updated to single light color */
+.book-now-btn {
+  background-color: #d3e5f1; /* Light blue background */
+  color: #000; /* Dark text for contrast */
+  padding: 12px 25px;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.book-now-btn:hover {
+  background-color: #a3c4e0; /* Slightly darker blue on hover */
+}
+
+/* WhatsApp Floating Button */
+.whatsapp-float {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background-color: #25D366;
+  color: white;
+  padding: 15px;
+  border-radius: 50px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  z-index: 100;
+}
+
+.whatsapp-icon {
+  font-size: 1.5rem;
+}
+
+.whatsapp-float span {
+  font-size: 1.1rem;
+}
+
+/* Suggestion Link */
+.suggestion-form-link {
+  margin-top: 40px;
+}
+
+.suggestion-form-link a {
+  color: #3498db;
+  text-decoration: none;
+}
