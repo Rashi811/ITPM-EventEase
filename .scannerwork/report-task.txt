@@ -1,0 +1,6 @@
+projectKey=ITPM_EventEase
+serverUrl=http://localhost:9000
+serverVersion=25.4.0.105899
+dashboardUrl=http://localhost:9000/dashboard?id=ITPM_EventEase
+ceTaskId=a1fcbafa-c0fa-482f-b245-395f8d3d917a
+ceTaskUrl=http://localhost:9000/api/ce/task?id=a1fcbafa-c0fa-482f-b245-395f8d3d917a
