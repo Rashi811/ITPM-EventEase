@@ -3,18 +3,21 @@ const mongoose = require("mongoose");
 const cors = require("cors");  // Import cors after express
 const eventRoutes = require("./Routes/eventRoutes");
 const reportRoutes = require("./Routes/reportRoutes");
+const reminderRoutes = require("./Routes/reminderRoute");
+const confirmRoutes = require("./Routes/userconfirmRoute");
+
 require('dotenv').config();
 
 // Initialize express app
 const app = express(); 
 
 // Log environment variables (remove in production)
-console.log('Environment variables loaded:', {
-    EMAIL_USER: process.env.EMAIL_USER,
-    EMAIL_PASS: process.env.EMAIL_PASS ? '****' : undefined,
-    PORT: process.env.PORT,
-    MONGO_URI: process.env.MONGO_URI ? '****' : undefined
-});
+// console.log('Environment variables loaded:', {
+//     EMAIL_USER: process.env.EMAIL_USER,
+//     EMAIL_PASS: process.env.EMAIL_PASS ? '****' : undefined,
+//     PORT: process.env.PORT,
+//     MONGO_URI: process.env.MONGO_URI ? '****' : undefined
+// });
 
 // CORS configuration
 app.use(cors({
@@ -38,6 +41,8 @@ app.use("/api/reports", reportRoutes);
 app.use('/api/tasks', taskRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/venue-suggestions', venueSuggestionRoutes);
+app.use("/reminder", reminderRoutes);
+app.use("/confirm", confirmRoutes);
 
 // Health check endpoint
 app.get('/health', (req, res) => {

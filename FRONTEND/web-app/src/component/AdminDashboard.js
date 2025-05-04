@@ -17,6 +17,7 @@ const AdminDashboard = () => {
           <button onClick={() => handleNavigation('admin-venue-home')}>Venue</button>
           <button onClick={() => handleNavigation('task-dashboard')}>Task</button>
           <button onClick={() => handleNavigation('reminders')}>Reminder</button>
+          <button onClick={() => handleNavigation('confirm')}>Confirm Event</button>
         </div>
         
       </nav>

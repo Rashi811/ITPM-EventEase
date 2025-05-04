@@ -37,6 +37,7 @@ const Login = () => {
         // Here you would typically make an API call to your backend
         // For now, we'll just navigate to home for regular users
         login({ username: formData.username, isAdmin: false });
+        localStorage.setItem('email', formData.username);
         navigate('/');
       }
     } catch (err) {

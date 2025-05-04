@@ -34,6 +34,12 @@ import TaskCreateForm from "./component/Task/CreateTaskForm";
 import TaskList from "./component/Task/TaskList";
 import UpdateTaskForm from "./component/Task/UpdateTask";
 
+import Reminder from "./component/Reminder/Reminder";
+import CreateReminder from "./component/Reminder/CreateReminder"; // Import CreateReminder
+import UpdateReminder from "./component/Reminder/UpdateReminder"; // Import UpdateReminder
+import ConfirmEventCards from "./component/Reminder/confirmEvent";
+import Notifications from "./component/Reminder/notifications";
+
 function App() {
   return (
     <AuthProvider>
@@ -45,8 +51,22 @@ function App() {
             <Route path="/signUp" element={<SignUp />} />
             <Route path="/about" element={<AboutUs />} />
             <Route path="/admin/admin-event" element={<AdminEvent />} />
+            {/* <Route path="/admin/reminders" element={<Reminder />} /> */}
+            <Route path="/create-reminder/" element={<CreateReminder />} />
+            <Route path="/update-reminder/" element={<UpdateReminder />} />
+            <Route path="/notifications/" element={<Notifications />} />
 
-            
+
+            <Route path="/admin/reminders" element={
+              <ProtectedRoute>
+                <Reminder />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/confirm" element={
+              <ProtectedRoute>
+                <ConfirmEventCards />
+              </ProtectedRoute>
+            } />
             {/* Protected Routes */}
             <Route path="/" element={
               <ProtectedRoute>

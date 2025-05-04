@@ -1,0 +1,70 @@
+/* Ensures that the body and html take up the full height */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* Styles for the Add Event Container */
+.add-event-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 70vh;
+  background-color: #f4f4f4;
+  padding: 50px 0;
+}
+
+/* Styles for the Add Event Form */
+.add-event {
+  text-align: center;
+  background-color: white;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 500px;
+  max-width: 90%;
+  margin: 0 auto;
+  transform: translateY(15px);
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin: auto;
+}
+
+input, textarea {
+  margin: 10px 0;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+button {
+  background: #28a745;
+  color: white;
+  padding: 12px 30px;
+  border: none;
+  cursor: pointer;
+  margin-top: 10px;
+  border-radius: 5px;
+  width: 250px;
+  align-self: center;
+  font-size: 16px;
+}
+
+button:hover {
+  background: #218838;
+}
+
+.cancel-button {
+  background-color: #ccc;
+  color: black;
+}
+
+.cancel-button:hover {
+  background-color: #bbb;
+}

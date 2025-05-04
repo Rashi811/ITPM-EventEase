@@ -11,6 +11,7 @@ const Header = () => {
 
   const handleLogout = () => {
     logout();
+    localStorage.removeItem('email'); // Clear email from local storage
     navigate('/login');
   };
 
@@ -30,7 +31,7 @@ const Header = () => {
             <Link to="/event" className="header-nav-item">Events</Link>
             <Link to="/venues" className="header-nav-item">Venues</Link>
             <Link to="/about" className="header-nav-item">About</Link>
-
+            <Link to="/notifications" className="header-nav-item">🔔</Link>
 
             {user?.isAdmin && (
               <Link to="/admin-dashboard" className="header-nav-item">
